@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-index.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-pay.css"/>
+
+    <!--<script type="text/javascript" src="/tags/fm.tag.js"></script>
+    <link rel="stylesheet" type="text/css" href="/tags/fm.tag.css"/>-->
+
+    <script type="text/javascript" src="/web/date-tools.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-list.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-member.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-score.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-friend.js"></script>
+    <!--<script type="text/javascript" src="/web/newOrders/orders-pay-ticket.js"></script>-->
+    <script type="text/javascript" src="/web/newOrders/orders-pay-ticket-new.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-meituan.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-meituan-old.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-ffan.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-discount.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-normal.js"></script>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div ">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
+                    <div class="max-height pay-commodity-list">
+                        <h4 class="title">订单信息</h4>
+                        <div class="order-info">
+                            <p>订单编号：<span th:text="${order.no}"></span></p>
+                            <p>订单金额：<span id="totalMoney" th:text="${order.totalMoney}"></span> 元</p>
+                            <p th:if="${order.discountMoney>0}">可以折扣：<b style="color:#F00;" th:text="${order.discountMoney}"></b>元（<span th:text="${order.discountReason}"></span>）</p>
+                            <p>用餐人数：<span th:text="${order.commodityCount}" style="font-size:24px; font-weight:bold; color:#F00; padding:0px 5px;"></span>人</p>
+                            <p>创建时间：<span th:text="${order.createTime}"></span></p>
+                        </div>
+                        <table class="commodity-table">
+                            <tr>
+                                <th>商品</th>
+                                <th>数量</th>
+                                <th>小计</th>
+                            </tr>
+                        </table>
+                        <div class="commodity-list-hidden" style="display:none">
+                           <span th:each="commodity : ${commodityList}" th:attr="comName=${commodity.commodityName}, comNo=${commodity.commodityNo}, price=${commodity.price}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-xs-9 col-lg-9">
+                    <div class="max-height" style="padding:15px;">
+                        <h4 th:text="${order.isSelf eq '1'?'自助餐':'外卖单品'}" style="color:#F60; padding:0px 0px 8px 15px; border-bottom:1px #eee solid;"></h4>
+                        <div class="order-type-div">
+                            <span>订单性质：</span>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" orderType="1" th:class="'btn btn-default '+${(order.type eq null or order.type eq '' or order.type eq '1')?'btn-info':''}" ><i class="fa fa-gavel"></i> 正常</button>
+                                <button type="button" orderType="3" net="0" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团（断网）</button>
+                                <button type="button" orderType="5" th:class="'btn btn-default '+${order.type eq '5'?'btn-info':''}" title="输入会员手机和密码，验证通过后从会员账户上扣款"><i class="fa fa-user-secret"></i> 会员</button>
+                                <button th:if="${order.isSelf eq '1'}" type="button" orderType="6" th:class="'btn btn-default '+${order.type eq '6'?'btn-info':''}" title="卡券总数不能超过全票总数"><i class="fa fa-ticket"></i> 卡券</button>
+                                <button th:if="${order.isSelf eq '1'}" type="button" orderType="11" th:class="'btn btn-default '+${order.type eq '11'?'btn-info':''}" th:title="|积分抵扣金额不能超过订单金额的${rules.scoreDeductible}%|"><i class="fa fa-cubes"></i> 积分</button>
+                                <button type="button" orderType="9" th:class="'btn btn-default '+${order.type eq '9'?'btn-info':''}"  title="输入飞凡提货码或券码，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-facebook"></i> 飞凡</button>
+                                <button th:if="${order.isSelf eq '1'}" type="button" orderType="4" th:class="'btn btn-default '+${order.type eq '4'?'btn-info':''}" title="输入折扣手机号码，待审核通过后方可收款入场"><i class="fa fa-group"></i> 亲情</button>
+                                <!--<button type="button" orderType="2" th:class="'btn btn-default '+${order.type eq '2'?'btn-info':''}" ><i class="fa fa-weixin"></i> 微信订单</button>-->
+                                <button type="button" orderType="3" net="1" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团</button>
+                                <!--<button th:if="${order.isSelf eq '1'}" type="button" orderType="8" th:class="'btn btn-default '+${order.type eq '8'?'btn-info':''}" title="卡券总数不能超过全票总数"><i class="fa fa-university"></i> 商场订单</button>-->
+                            </div>
+                        </div>
+                        <div class="special-type" style="display:none">
+
+                        </div>
+                        <div class="show-money">
+                            <span class="money-name">应付金额：</span>
+                            <input name="needMoney" th:value="${order.totalMoney}" type="hidden"/>
+                            <span class="money-amount"><b class="fa fa-cny"></b> <b class="money" th:text="${order.totalMoney}"></b> 元<small>(不包含压金)</small></span>
+                        </div>
+                        <div class="pay-types">
+                            <span><b style="color:#00F;">餐费</b>支付方式：</span>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" class="btn btn-default btn-danger" payType="1"><i class="fa fa-cny"></i> 现金支付</button>
+                                <button type="button" class="btn btn-default" payType="3"><i class="fa fa-weixin"></i> 微信支付</button>
+                                <button type="button" class="btn btn-default" payType="4">支付宝支付</button>
+                                <button type="button" class="btn btn-default" payType="2"><i class="fa fa-credit-card-alt"></i> 刷卡支付</button>
+                                <button type="button" class="btn btn-default" payType="5"><i class="fa fa-university"></i> 商场支付</button>
+                            </div>
+                        </div>
+                        <div class="bond-pay-types">
+                            <span><b style="color:#F00">押金</b>支付方式：</span>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" class="btn btn-default btn-danger" payType="1"><i class="fa fa-cny"></i> 现金支付</button>
+                                <button type="button" class="btn btn-default" payType="3"><i class="fa fa-weixin"></i> 微信支付</button>
+                                <button type="button" class="btn btn-default" payType="4">支付宝支付</button>
+                            </div>
+                        </div>
+                        <div class="submit-pay">
+                            <input name="bondMoney" th:value="${price.bondMoney}" type="hidden"/>
+                            <input name="bondCount" type="hidden"/>
+                            <input name="payType" value="1" type="hidden"/>
+                            <input name="bondPayType" value="1" type="hidden"/>
+                            <input name="specialType" th:value="${order.type eq null ? '1':order.type}" type="hidden"/>
+                            <input name="orderTotalMoney" th:value="${order.totalMoney}" type="hidden"/>
+                            <input name="reserve" value="1" title="信息不全，请检查后再提交" type="hidden"/>
+                            <input name="discountReason" th:value="${order.discountReason}" type="hidden"/>
+                            <input name="orderNo" type="hidden" th:value="${order.no}"/>
+                            <input name="orderStatus" type="hidden" th:value="${order.status}"/>
+                            <input name="discountMoney" th:value="${order.discountMoney}" type="hidden"/>
+                            <input name="isDiscountDay" th:value="${isDiscountDay?'1':'0'}" type="hidden"/>
+                            <input name="discountConfig" type="hidden" th:value="${discountConfig}" th:attr="am=${discountConfig.discountAM},pm=${discountConfig.discountPM}, amh=${discountConfig.discountHalfAM}, pmh=${discountConfig.discountHalfPM}"/>
+
+                            <input name="scoreMoney" th:value="${rules.scoreMoney}" title="积分兑换率" type="hidden"/>
+                            <input name="scoreDeductible" th:value="${rules.scoreDeductible}" title="积分抵扣率" type="hidden"/>
+
+                            <input name="mealTime" th:if="${rules ne null}" th:value="${rules.spe}" type="hidden"/>
+                            <button type="button" class="btn btn-lg btn-danger" onclick="removeOrder()" style="float:right;margin-right:20px;"><i class="fa fa-remove"></i> 删除订单</button>
+                            <button type="button" class="btn btn-lg btn-primary submit-order-btn" style="margin-right:20px;" onclick="submitOrder()"><i class="fa fa-check"></i> 确认收款</button>
+                            <button type="button" class="btn btn-lg submit-remind-btn" style="margin-right:20px; float:right; display:none;"><i class="fa fa-time"></i> 订单提交中，请稍候……</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
