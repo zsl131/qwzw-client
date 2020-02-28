@@ -8,10 +8,7 @@ import com.zslin.model.DiscountTime;
 import com.zslin.service.IBuffetOrderService;
 import com.zslin.service.IDiscountTimeService;
 import com.zslin.service.IMemberChargeService;
-import com.zslin.tools.OrderNoTools;
-import com.zslin.tools.RestdayTools;
-import com.zslin.tools.VersionTools;
-import com.zslin.tools.WordTools;
+import com.zslin.tools.*;
 import com.zslin.web.dto.MyTimeDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,6 +55,17 @@ public class NormalTest {
 
     @Autowired
     private ICardCheckService cardCheckService;
+
+    @Autowired
+    private PictureTools pictureTools;
+
+    @Test
+    public void test35() {
+        String url = "/worker/7e5faaaa-c683-4bbd-baef-bc97669b1b00.jpg";
+        String path = pictureTools.downloadImage("worker", url);
+        System.out.println("-------------------------------<<< result");
+        System.out.println(path);
+    }
 
     @Test
     public void test34() throws Exception {

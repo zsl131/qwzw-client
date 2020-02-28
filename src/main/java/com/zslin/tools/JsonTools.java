@@ -54,4 +54,12 @@ public class JsonTools {
 		}
 		return result;
 	}
+
+	public static String getJsonValue(JSONObject jsonObj, String field) {
+		try {
+			return jsonObj.getString(field);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

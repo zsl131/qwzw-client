@@ -30,6 +30,10 @@ public class SystemInterceptor extends HandlerInterceptorAdapter {
         }
         if(appConfig==null) {
             appConfig = appConfigService.loadOne();
+            String path = request.getServletPath();
+            if((appConfig==null || !"1".equals(appConfig.getInitFlag())) && !"/init".equals(path)) { //如果没有初始化
+                response.sendRedirect(request.getContextPath()+"/init");
+            }
             session.setAttribute("appConfig", appConfig);
         }
 

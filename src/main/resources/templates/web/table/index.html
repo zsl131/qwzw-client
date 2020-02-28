@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-index.css"/>
+    <script type="text/javascript" src="/web/date-tools.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index-add.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-table.css"/>
+    <script type="text/javascript" src="/web/multi/web-table.js"></script>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+                    <div class="commodity-type-list">
+                        <ul>
+                            <li th:class="${type eq '1'?'current':''}"><a href="/web/table/index?type=1">堂食下单</a></li>
+                            <li th:class="${type eq '3'?'current':''}"><a href="/web/table/index?type=3">外卖下单</a></li>
+                        </ul>
+                    </div>
+                    <div class="index-commodity-list">
+                        <ul class="table-list-ul">
+                            <li th:each="table : ${tableList}" th:id="|table_li_${table.id}|" onclick="onOrder(this)" th:attr="tableId=${table.id},remark=${table.remark}" th:title="${table.name}">
+                                <p><span th:text="${table.name}" class="name"></span></p>
+                                <p ><span th:text="${table.remark}"></span></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mealing_table_div">
+                    <input th:each="order : ${mealingOrders}" th:value="${order.tableId}" th:attr="orderNo=${order.no}" class="mealing_table_id" type="hidden"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

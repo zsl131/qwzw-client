@@ -42,7 +42,7 @@ public class OrderNoTools {
     private String buildShortNo(String type, Integer orderNo) {
         String str = ""+(orderNo+1);
         StringBuffer sb = new StringBuffer(type);
-        for(int i=0;i<4-str.length();i++) {
+        for(int i=0;i<3-str.length();i++) {
             sb.append("0");
         }
         sb.append(str);

@@ -23,7 +23,7 @@ public class WebInterceptor extends HandlerInterceptorAdapter {
         BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
         WorkerCookieTools workerCookieTools = (WorkerCookieTools) factory.getBean("workerCookieTools");
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {
+        if(w==null) { //跳转到前台登陆
             response.sendRedirect(request.getContextPath()+"/public/login");
             return false;
         } else {

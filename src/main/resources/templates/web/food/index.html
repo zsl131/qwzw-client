@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-index.css"/>
+    <script type="text/javascript" src="/web/date-tools.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index-add.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-table.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-food.css"/>
+    <script type="text/javascript" src="/web/multi/web-food.js"></script>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div ">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+                    <div class="commodity-type-list">
+                        <ul>
+                            <li class="current"><b th:text="${table.name}"></b>-<span th:text="${table.remark}"></span></li>
+                        </ul>
+                    </div>
+
+                    <div class="index-food-list">
+                        <div class="col-md-2 col-sm-2 col-xs-2 col-lg-2" style="padding:0px;position: relative">
+                            <div style="position:fixed;width:180px">
+                            <ul class="category-list max-height2" style="" th:with="count=${#httpServletRequest.getParameter('count')},tableId=${#httpServletRequest.getParameter('tableId')}, cateId=${#httpServletRequest.getParameter('cateId')}">
+                                <li>
+                                    <a href="javascript:void(0)" onclick="onCategoryClick(this)" class="current-href" cateId="">所有分类</a>
+                                </li>
+                                <li th:each="category : ${categoryList}">
+                                    <a href="javascript:void(0)" th:text="${category.name}" onclick="onCategoryClick(this)" th:attr="cateId=${category.dataId}"></a>
+                                </li>
+                            </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 col-sm-8 col-xs-8 col-lg-8" style="padding: 0px;">
+                            <div class="form-group form-group" style="padding: 10px 10px 0px 10px;">
+                                <div class="input-group">
+                                    <div class="input-group-addon">筛选：</div>
+                                    <input tabindex="1" name="keyword" onkeyup="onSearch(this)" type="text" class="form-control" placeholder="可输入名称、名称首字母" />
+                                </div>
+                            </div>
+
+                            <div class="food-list-div">
+                                <ul class="food-list-ul">
+                                    <li th:each="food : ${foodList}" th:attr="cateId=${food.cateId}, foodName=${food.name}, sn=${food.sn},nameLetter=${food.nameLetter}">
+                                        <img th:src="${food.picPath}"/>
+                                        <p class="name" th:text="${food.name}"></p>
+                                        <p class="price">￥ <b th:text="${food.price}"></b></p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-2 col-lg-2">
+                            <div class="max-height2 " style="background:#fff;">---</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

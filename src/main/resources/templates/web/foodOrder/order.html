@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-index.css"/>
+    <script type="text/javascript" src="/web/date-tools.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index-add.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-table.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-food.css"/>
+    <script type="text/javascript" src="/web/multi/web-food.js"></script>
+    <script type="text/javascript" src="/web/multi/web-foodOrder.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-order-menu.css"/>
+</head>
+<body>
+<!--onbeforeunload="return checkRefresh()"-->
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div ">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+                    <!--<div class="commodity-type-list">
+                        <ul>
+                            <li class="current"><b th:text="${table.name}"></b>-<span th:text="${table.remark}"></span></li>
+                        </ul>
+                    </div>-->
+
+                    <input th:value="${order.no}" name="orderNo" type="hidden"/>
+                    <div class="index-food-list">
+                        <div class="col-md-1 col-sm-1 col-xs-1 col-lg-1" style="padding:0px;position: relative;">
+                            <div style="position:fixed;">
+                            <ul class="category-list max-height2" style="width:100%;" th:with="count=${#httpServletRequest.getParameter('count')},tableId=${#httpServletRequest.getParameter('tableId')}, cateId=${#httpServletRequest.getParameter('cateId')}">
+                                <li>
+                                    <a href="javascript:void(0)" onclick="onCategoryClick(this)" class="current-href" cateId="">所有分类</a>
+                                </li>
+                                <li th:each="category : ${categoryList}">
+                                    <a href="javascript:void(0)" th:text="${category.name}" onclick="onCategoryClick(this)" th:attr="cateId=${category.dataId}"></a>
+                                </li>
+
+                            </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 col-sm-8 col-xs-8 col-lg-8" style="padding: 0px;">
+                            <div class="form-group" style="padding: 10px 10px 0px 10px;">
+                                <div class="input-group">
+                                    <div class="input-group-addon">筛选：</div>
+                                    <input tabindex="1" name="keyword" onkeyup="onSearch(this)" type="text" class="form-control" placeholder="可输入名称、名称首字母" />
+                                </div>
+                            </div>
+
+                            <div class="food-list-div">
+                                <ul class="food-list-ul">
+                                    <li th:each="food : ${foodList}" onclick="addBasket(this)" th:attr="foodId=${food.id}, price=${food.price}, cateId=${food.cateId}, foodName=${food.name}, sn=${food.sn},nameLetter=${food.nameLetter}">
+                                        <img th:src="${food.picPath}"/>
+                                        <p class="name" th:text="${food.name}"></p>
+                                        <p class="price">￥ <b th:text="${food.price}"></b></p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
+                            <div class="max-height3" style="background:#fff;padding: 10px;">
+                                <div class="order-menu-main">
+                                    <p class="store-name">签王之王-昭通吾悦广场店</p>
+                                    <div class="order-no">
+                                        订单编号：<b th:text="${order.no}"></b>
+                                    </div>
+                                    <div class="table-info-main">
+                                        <div class="table-name">桌号：<b th:text="${table.name}"></b></div>
+                                        <div class="input-group people-amount">
+                                            <input name="people_amount" type="number" th:attr="oldVal=${order.amount}" onchange="changePeopleAmount(this)" style="width:80px" class="form-control" th:value="${order.amount}" placeholder="人数" />
+                                            <span class="input-group-addon">人</span>
+                                        </div>
+                                    </div>
+
+
+                                    <ul class="nav nav-tabs food-nav-ul" style="margin-top:8px">
+                                        <li class="already-nav active">
+                                            <a class="dropdown-toggle" href="#" >已点菜品</a>
+                                        </li>
+                                        <li class="new-append-nav">
+                                            <a class="dropdown-toggle">新增菜品</a>
+                                        </li>
+                                    </ul>
+                                    <div class="new-append-div">
+                                        <ul class="menu-food-ul">
+                                            <li class="header">
+                                                <div class="name">品名</div>
+                                                <div class="price">单价/数量</div>
+                                                <div class="total">小计</div>
+                                            </li>
+                                            <div class="food-list-container">
+<!--
+                                                <li class="new-append">
+                                                    <div class="name">红糖糍粑</div>
+                                                    <div class="price">￥12x<b class="amount">2</b></div>
+                                                    <div class="total">￥24</div>
+                                                </li>
+                                                <li>
+                                                    <div class="name">红糖糍粑</div>
+                                                    <div class="price">￥12x<b class="amount">2</b></div>
+                                                    <div class="total">￥24</div>
+                                                </li>
+                                                <li>
+                                                    <div class="name">红糖糍粑</div>
+                                                    <div class="price">￥12x<b class="amount">2</b></div>
+                                                    <div class="total">￥24</div>
+                                                </li>-->
+                                            </div>
+
+                                            <li class="result">
+                                                <div class="name">合计：</div>
+                                                <div class="total">-</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

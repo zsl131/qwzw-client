@@ -1,5 +1,7 @@
 $(function() {
     setMaxHeight();
+    setMaxHeight2();
+    setMaxHeight3();
     setCommodityStyle();
 })
 
@@ -36,6 +38,26 @@ function setMaxHeight() {
 
     $(".max-height").each(function() {
         $(this).css("height", needHeight+"px");
+    });
+}
+
+function setMaxHeight2() {
+    var winHeight = $(window).height();
+    var needHeight = winHeight - 40 - 100;
+
+    $(".max-height2").each(function() {
+        $(this).css("height", needHeight+"px");
+        $(this).css("overflow", "auto");
+    });
+}
+
+function setMaxHeight3() {
+    var winHeight = $(window).height();
+    var needHeight = winHeight - 40 - 100;
+
+    $(".max-height3").each(function() {
+        $(this).css("min-height", needHeight+"px");
+        $(this).css("overflow", "auto");
     });
 }
 

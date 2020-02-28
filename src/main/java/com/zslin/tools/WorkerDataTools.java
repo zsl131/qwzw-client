@@ -17,8 +17,12 @@ public class WorkerDataTools {
     @Autowired
     private IWorkerService workerService;
 
+    @Autowired
+    private PictureTools pictureTools;
+
     public void handler(Integer dataId, JSONObject jsonObj, String action) {
         String phone = jsonObj.getString("phone");
+//        System.out.println(action+"------->WorkerDataTools--> "+jsonObj.toString());
         Worker w = workerService.findByPhone(phone);
 //        Worker w = workerService.findByObjId(dataId);
         if("delete".equals(action)) {
@@ -27,10 +31,12 @@ public class WorkerDataTools {
             if(w==null) {
                 w = new Worker();
             }
-            try {
-                w.setHeadimgurl(jsonObj.getString("headimgurl"));
-            } catch (JSONException e) {
+            String headimgurl = pictureTools.downloadImage("worker", JsonTools.getJsonValue(jsonObj, "headimgurl"));
+            if(headimgurl==null || "".equals(headimgurl)) {
+                headimgurl = pictureTools.downloadImage("worker", JsonTools.getJsonValue(jsonObj, "headPic"));
             }
+            w.setHeadimgurl(headimgurl);
+
             w.setName(jsonObj.getString("name"));
             w.setObjId(dataId);
             try {

@@ -38,6 +38,9 @@ public class TimerTaskTools {
     @Autowired
     private UploadFileTools uploadFileTools;
 
+    @Autowired
+    private MultiHandlerTools multiHandlerTools;
+
     public void upload() {
         Company c = clientConfigTools.getCompany();
         if (c != null && c.getId() != null && c.getId() > 0) {
@@ -131,6 +134,12 @@ public class TimerTaskTools {
             cardHandlerTools.handlerCardUnder(dataObj);
         } else if("orderResult".equalsIgnoreCase(type)) {
             simpleDataTools.handlerUpdateOrderResult(dataObj);
+        } else if("category".equalsIgnoreCase(type)) { //菜品分类
+            multiHandlerTools.handlerCategory(dataId, dataObj, action);
+        } else if("food".equalsIgnoreCase(type)) { //菜品
+            multiHandlerTools.handlerFood(dataId, dataObj, action);
+        } else if("table".equalsIgnoreCase(type)) { //餐桌
+            multiHandlerTools.handlerDiningTable(dataId, dataObj, action);
         }
     }
 

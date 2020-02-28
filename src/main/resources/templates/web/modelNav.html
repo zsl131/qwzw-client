@@ -31,7 +31,7 @@
 
             <ul class="opt-ul" th:if="${session.login_worker ne null}" style="float:right;">
                 <li><a href="/public/logout" class="btn btn-danger logout-href"><i class="fa fa-lock"></i> 退出登陆</a></li>
-                <li><button class="btn btn-warning apply-card-btn"><i class="fa fa-ticket"></i> 申请卡券</button></li>
+                <!--<li><button class="btn btn-warning apply-card-btn"><i class="fa fa-ticket"></i> 申请卡券</button></li>-->
                 <li><a href="/" class="btn btn-success" type="button" style="margin-right:3px;"><img th:if="${session.login_worker.headimgurl ne null}" th:src="${session.login_worker.headimgurl}" style="width:24px;border-radius:20px;"/><b th:if="${session.login_worker.headimgurl eq null}" class="fa fa-home"></b> <span class="cashier" th:text="${session.login_worker.name}"></span></a></li>
             </ul>
             <script type="text/javascript">

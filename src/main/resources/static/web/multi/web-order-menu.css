@@ -1,0 +1,83 @@
+.order-menu-main {
+	width: 100%;
+}
+.store-name {
+	width: 100%; text-align:center; font-weight:bold; font-size: 16px; border-bottom:1px #aaa dotted; padding-bottom: 6px;
+	display:flex; line-height: 35px; text-align:center;
+}
+
+.order-no {
+    line-height: 30px;
+}
+
+.table-info-main {
+    width:100%; display: flex; border-bottom: 1px #aaa dotted; padding: 9px;
+}
+.table-info-main .table-name {
+    font-size: 16px; line-height: 35px; flex: 1; color:#999;
+}
+.table-info-main .table-name b {
+    color:#00F;
+}
+.table-info-main .people-amount {
+    width: 110px;
+}
+
+
+
+.new-append-div {
+    width:100%;
+}
+.menu-food-ul {
+    width: 100%; padding:0px;
+}
+.menu-food-ul li {
+    list-style: none; padding:0px;
+    display: flex; line-height: 28px; position: relative;
+}
+.menu-food-ul li div {
+    padding: 5px; flex: 1; text-align:center; color:#888;
+}
+.menu-food-ul li.header {
+    line-height: 30px; border-bottom: 1px #ddd solid; background:#f7f7f7;
+}
+.menu-food-ul li.header div {
+    font-weight:bold;
+}
+
+.menu-food-ul li .amount {
+    color:#F00; font-size: 16px; padding-left: 2px;
+}
+.menu-food-ul li .total {
+    color:#000;
+}
+
+.menu-food-ul li.result {
+    border-top: 1px #ddd solid;
+}
+
+.menu-food-ul li.result .total {
+    font-size: 18px; color:#00F; font-weight:bold;
+}
+
+.menu-food-ul li.hover {
+    background:#f7f7f7; border: 1px #ddd solid; border-width: 1px 1px 0px 1px;
+}
+
+.menu-food-ul li .operator-div {
+    position: absolute; width:100%; min-height: 45px; background:#f7f7f7;
+    display: none; left: 0px; bottom: 0px; top: 35px; z-index: 999; opacity:1; display: flex;
+    border: 1px #ddd solid; border-width: 0px 1px 1px 1px; padding: 0px 1px;
+}
+
+.menu-food-ul li .operator-div div {
+    flex: 1; text-align:center;
+}
+
+.new-append-border {
+    border:2px #f00 solid;
+}
+
+.food-nav-ul li {
+    cursor: pointer;
+}
