@@ -26,52 +26,41 @@
 
 
 .new-append-div {
-    width:100%;
+    width:100%; display: none;
 }
-.menu-food-ul {
+.normal-food-ul {
     width: 100%; padding:0px;
 }
-.menu-food-ul li {
+.normal-food-ul li {
     list-style: none; padding:0px;
     display: flex; line-height: 28px; position: relative;
 }
-.menu-food-ul li div {
+.normal-food-ul li div {
     padding: 5px; flex: 1; text-align:center; color:#888;
 }
-.menu-food-ul li.header {
+.normal-food-ul li div.name {
+    color:#222;
+}
+.normal-food-ul li.header {
     line-height: 30px; border-bottom: 1px #ddd solid; background:#f7f7f7;
 }
-.menu-food-ul li.header div {
+.normal-food-ul li.header div {
     font-weight:bold;
 }
 
-.menu-food-ul li .amount {
+.normal-food-ul li .amount {
     color:#F00; font-size: 16px; padding-left: 2px;
 }
-.menu-food-ul li .total {
+.normal-food-ul li .total {
     color:#000;
 }
 
-.menu-food-ul li.result {
+.normal-food-ul li.result {
     border-top: 1px #ddd solid;
 }
 
-.menu-food-ul li.result .total {
+.normal-food-ul li.result .total {
     font-size: 18px; color:#00F; font-weight:bold;
-}
-
-.menu-food-ul li.hover {
-    background:#f7f7f7; border: 1px #ddd solid; border-width: 1px 1px 0px 1px;
-}
-
-.menu-food-ul li .operator-div {
-    position: absolute; width:100%; min-height: 45px; background:#f7f7f7;
-    display: none; left: 0px; bottom: 0px; top: 35px; z-index: 999; opacity:1; display: flex;
-    border: 1px #ddd solid; border-width: 0px 1px 1px 1px; padding: 0px 1px;
-}
-
-.menu-food-ul li .operator-div div {
-    flex: 1; text-align:center;
 }
 
 .new-append-border {
@@ -80,4 +69,16 @@
 
 .food-nav-ul li {
     cursor: pointer;
+}
+
+.submit-food-div {
+    width: 100%; text-align:center; background:#f7f7f7; padding: 6px 0px;
+}
+
+.red-badge {
+    background:#F00;
+}
+
+.table-btn {
+    margin: 5px;
 }

@@ -67,13 +67,24 @@ public class FoodOrder {
     @Column(name = "discount_type")
     private String discountType;
 
-    /** 付款方式，只有到店下单才会有此值；1-现金；2-刷卡；3-微信支付；4-支付宝支付；5-商场支付 */
+    /** 付款方式，只有到店下单才会有此值；1-现金；2-微信；3-支付宝支付；4-刷卡；5-商场支付 */
     @Column(name = "pay_type")
     private String payType;
 
     /** 收银金额，只是餐费，不包含压金 */
     @Column(name = "total_money")
-    private Float totalMoney;
+    private Float totalMoney=0f;
+
+    /** 收银金额，挂零后的金额 */
+    private Float totalMoney2=0f;
+
+    /** 是否去除小数点 */
+    @Column(name = "remove_dot")
+    private String removeDot="0";
+
+    /** 抹零金额 */
+    @Column(name = "dot_money")
+    private Float dotMoney=0f;
 
     /** 餐桌ID */
     @Column(name = "table_id")
@@ -86,4 +97,9 @@ public class FoodOrder {
     /** 用餐人数 */
     private Integer amount;
 
+    /** 菜品数量 */
+    private Integer foodCount =0;
+
+    /** 总的菜品多少份 */
+    private Integer unitCount=0;
 }

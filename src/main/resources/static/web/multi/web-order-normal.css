@@ -1,0 +1,15 @@
+.normal-food-ul li .operator-div {
+    position: absolute; width:100%; min-height: 45px; background:#f7f7f7;
+    display: none; left: 0px; bottom: 0px; top: 35px; z-index: 999; opacity:0.8; display: flex;
+    border: 1px #ddd solid; border-width: 0px 1px 1px 1px; padding: 0px 1px;
+}
+
+.normal-food-ul li .operator-div div {
+    flex: 1; text-align:center;
+}
+.normal-food-ul li {
+    border-top: 1px #fff solid;
+}
+.normal-food-ul li.hover {
+    background:#f7f7f7; border: 1px #ddd solid; border-width: 1px 1px 0px 1px;
+}

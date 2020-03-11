@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-order-settle.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-order-normal.css"/>
+    <script style="text/javascript" src="/web/multi/web-order-settle.js"></script>
+</head>
+<body>
+<!--onbeforeunload="return checkRefresh()"-->
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div container">
+            <div class="row">
+                <div class="col-md-5 col-sm-5 col-xs-5 col-lg-5 left-party" style="background:#FFF; padding: 10px;">
+                    <div class="order-menu-main">
+                        <div class="store-name"><b>签王之王-昭通吾悦广场店</b><p>预结单</p></div>
+                        <div class="order-pros">
+                            <div style="flex: 1">单号：<b th:text="${order.no}"></b></div>
+                            <div style="flex: 1">桌号：<b th:text="${order.tableName}"></b></div>
+                            <div style="flex: 1">人数：<b th:text="${order.amount}"></b></div>
+                        </div>
+                        <div class="food-list">
+                            <ul class="normal-food-ul">
+                                <li class="header">
+                                    <div class="price">品名</div>
+                                    <div class="total">数量</div>
+                                    <div class="price">单价</div>
+                                    <div class="money">小计</div>
+                                </li>
+                                <!-- 用于存放菜品 -->
+                                <div class="food-list-container">
+                                    <li th:each="food : ${detailList}"  th:attr="foodId=${food.foodId},foodName=${food.foodName},batchNo=${food.batchNo},detailId=${food.id}"><!--  onmouseenter="onOperator(this)"  onmouseleave="finishOperator(this)">-->
+                                        <div class="name" th:text="${food.foodName}"></div>
+                                        <div class="total"><b th:class="${(food.amount gt 1)?'amount':'food_amount'}" th:text="${food.amount}"></b></div>
+                                        <div class="price">￥<span th:text="${food.price}"></span></div>
+                                        <div class="money">￥<b th:text="${food.price*food.amount}"></b></div>
+                                        <div class="operator-div" style="display: none">
+                                            <div><button data-toggle="tooltip" data-placement="bottom" title="打印此菜" class="btn btn-default fa fa-cube" onClick="onClickOperator(this, 'cur')"></button></div>
+                                            <div><button data-toggle="tooltip" data-placement="bottom" title="打印本批" class="btn btn-default fa fa-cubes" onClick="onClickOperator(this, 'batch')"></button></div>
+                                            <div><button data-toggle="tooltip" data-placement="bottom" title="取消此菜" class="btn btn-danger" onClick="onClickOperator(this, \'dddd\')">删</button></div>
+                                        </div>
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7" style="padding-left: 10px">
+                    <div class="content-main">
+                        <input th:value="${order.no}" name="orderNo" type="hidden"/>
+                        <div class="store-name"><b>签王之王-昭通吾悦广场店</b><p>收银台</p></div>
+                        <div class="confirm-div">
+                            <div class="form-group">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon">订单金额：</span>
+                                <span class="form-control"><b class="total-money" style="font-size:22px;">-</b> 元</span>
+                                <div class="input-group-addon" style="padding:0px 12px;" data-toggle="tooltip" data-placement="top" title="勾选上即抹零">
+                                    <input type="checkbox" name="money-check" class="count-money-check" onchange="changeCheck()"/>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="form-group">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon">付款方式：</span>
+                                <div class="form-control" style="padding-top: 5px;">
+                                    <div class="pay-type-div">
+                                    <button class="btn pay-type-btn" payType="1">现金</button>
+                                    <button class="btn pay-type-btn" payType="2">微信</button>
+                                    <button class="btn pay-type-btn" payType="3">支付宝</button>
+                                    <button class="btn pay-type-btn" payType="4">刷卡</button>
+                                    <button class="btn pay-type-btn" payType="5">商场</button>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="form-group" style="text-align:right">
+                                <p>所需支付金额：￥ <b class="total-money2" style="font-size: 40px; padding-right: 10px; color:#F00;"></b>元</p>
+                                <button class="btn btn-primary btn-lg " onclick="submitMoney()">确定结账</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

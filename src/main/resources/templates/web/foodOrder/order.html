@@ -16,6 +16,7 @@
     <script type="text/javascript" src="/web/multi/web-food.js"></script>
     <script type="text/javascript" src="/web/multi/web-foodOrder.js"></script>
     <link type="text/css" rel="stylesheet" href="/web/multi/web-order-menu.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-order-normal.css"/>
 </head>
 <body>
 <!--onbeforeunload="return checkRefresh()"-->
@@ -68,10 +69,10 @@
                                 <div class="order-menu-main">
                                     <p class="store-name">签王之王-昭通吾悦广场店</p>
                                     <div class="order-no">
-                                        订单编号：<b th:text="${order.no}"></b>
+                                        订单编号：<a th:href="|/web/foodOrder/show?orderNo=${order.no}|" style="text-decoration:none;"><b th:text="${order.no}"></b></a>
                                     </div>
-                                    <div class="table-info-main">
-                                        <div class="table-name">桌号：<b th:text="${table.name}"></b></div>
+                                    <div class="table-info-main" data-toggle="tooltip" data-placement="top" title="可在这里修改用餐人数">
+                                        <div class="table-name"  style="text-align:right; padding-right: 10px;">桌号：<b th:text="${table.name}"></b></div>
                                         <div class="input-group people-amount">
                                             <input name="people_amount" type="number" th:attr="oldVal=${order.amount}" onchange="changePeopleAmount(this)" style="width:80px" class="form-control" th:value="${order.amount}" placeholder="人数" />
                                             <span class="input-group-addon">人</span>
@@ -80,37 +81,50 @@
 
 
                                     <ul class="nav nav-tabs food-nav-ul" style="margin-top:8px">
-                                        <li class="already-nav active">
-                                            <a class="dropdown-toggle" href="#" >已点菜品</a>
+                                        <li class="already-nav active" targetCls="already-food-list">
+                                            <a class="dropdown-toggle" href="#" >已点菜品&nbsp;<span class="badge red-badge already-amount" th:text="${order.unitCount}"></span></a>
                                         </li>
-                                        <li class="new-append-nav">
-                                            <a class="dropdown-toggle">新增菜品</a>
+                                        <li class="new-append-nav" targetCls="new-append-div">
+                                            <a class="dropdown-toggle">新增菜品&nbsp;<span class="badge red-badge append-badge"></span></a>
                                         </li>
                                     </ul>
-                                    <div class="new-append-div">
-                                        <ul class="menu-food-ul">
+                                    <!-- 已经提交过后的菜品列表 -->
+                                    <div class="already-food-list nav-con-div">
+                                        <ul class="already-food-ul normal-food-ul">
+                                            <li class="header">
+                                                <div class="name">批次号</div>
+                                                <div class="price">品名</div>
+                                                <div class="total">数量</div>
+                                            </li>
+                                            <!-- 用于存放菜品 -->
+                                            <div class="already-food-list-container">
+                                                <li th:each="food : ${detailList}"  th:attr="foodId=${food.foodId},foodName=${food.foodName},batchNo=${food.batchNo},detailId=${food.id}"  onmouseenter="onOperator(this)"  onmouseleave="finishOperator(this)">
+                                                    <div class="name" th:text="${food.batchNo}"></div>
+                                                    <div class="name1" th:text="${food.foodName}"></div>
+                                                    <div class="price"><b th:class="${(food.amount gt 1)?'amount':'food_amount'}" th:text="${food.amount}"></b></div>
+                                                    <div class="operator-div" style="display: none">
+                                                        <div><button data-toggle="tooltip" data-placement="bottom" title="打印此菜" class="btn btn-default fa fa-cube" onClick="onClickOperator(this, 'cur')"></button></div>
+                                                        <div><button data-toggle="tooltip" data-placement="bottom" title="打印本批" class="btn btn-default fa fa-cubes" onClick="onClickOperator(this, 'batch')"></button></div>
+                                                        <div><button data-toggle="tooltip" data-placement="bottom" title="取消此菜" class="btn btn-danger" onClick="onClickOperator(this, \'dddd\')">删</button></div>
+                                                        </div>
+                                                    </li>
+                                            </div>
+                                        </ul>
+                                        <div class="submit-food-div">
+                                            <button class="btn btn-success" onclick="onSettleOrder(this)">结算</button>
+                                            <button class="btn btn-info" onclick="onChangeTable()">换桌</button>
+                                            <button class="btn btn-danger" onclick="onCloseOrder()">关闭</button>
+                                        </div>
+                                    </div>
+                                    <div class="new-append-div nav-con-div">
+                                        <ul class="menu-food-ul normal-food-ul">
                                             <li class="header">
                                                 <div class="name">品名</div>
                                                 <div class="price">单价/数量</div>
                                                 <div class="total">小计</div>
                                             </li>
+                                            <!-- 用于存放菜品 -->
                                             <div class="food-list-container">
-<!--
-                                                <li class="new-append">
-                                                    <div class="name">红糖糍粑</div>
-                                                    <div class="price">￥12x<b class="amount">2</b></div>
-                                                    <div class="total">￥24</div>
-                                                </li>
-                                                <li>
-                                                    <div class="name">红糖糍粑</div>
-                                                    <div class="price">￥12x<b class="amount">2</b></div>
-                                                    <div class="total">￥24</div>
-                                                </li>
-                                                <li>
-                                                    <div class="name">红糖糍粑</div>
-                                                    <div class="price">￥12x<b class="amount">2</b></div>
-                                                    <div class="total">￥24</div>
-                                                </li>-->
                                             </div>
 
                                             <li class="result">
@@ -118,6 +132,9 @@
                                                 <div class="total">-</div>
                                             </li>
                                         </ul>
+                                        <div class="submit-food-div">
+                                            <button class="btn btn-primary" onclick="onSubmitFood(this)">确认下单</button>
+                                        </div>
                                     </div>
 
                                 </div>

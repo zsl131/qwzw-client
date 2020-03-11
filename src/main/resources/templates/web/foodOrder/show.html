@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-order-settle.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/multi/web-order-normal.css"/>
+    <script type="text/javascript" src="/web/multi/web-order-settle.js"></script>
+    <script type="text/javascript" src="/web/web-show-time.js"></script>
+</head>
+<body>
+<!--onbeforeunload="return checkRefresh()"-->
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div container">
+            <div class="row" th:if="${order ne null}">
+                <div class="col-md-5 col-sm-5 col-xs-5 col-lg-5 left-party" style="background:#FFF; padding: 10px;">
+                    <div class="order-menu-main">
+                        <div class="store-name"><b>签王之王-昭通吾悦广场店</b><p>预结单</p></div>
+                        <div class="order-pros">
+                            <div style="flex: 1">单号：<b th:text="${order.no}"></b></div>
+                            <div style="flex: 1">桌号：<b th:text="${order.tableName}"></b></div>
+                            <div style="flex: 1">人数：<b th:text="${order.amount}"></b></div>
+                        </div>
+                        <div class="food-list">
+                            <ul class="normal-food-ul">
+                                <li class="header">
+                                    <div class="price">品名</div>
+                                    <div class="total">数量</div>
+                                    <div class="price">单价</div>
+                                    <div class="money">小计</div>
+                                </li>
+                                <!-- 用于存放菜品 -->
+                                <div class="food-list-container">
+                                    <li th:each="food : ${detailList}"  th:attr="foodId=${food.foodId},foodName=${food.foodName},batchNo=${food.batchNo},detailId=${food.id}"><!--  onmouseenter="onOperator(this)"  onmouseleave="finishOperator(this)">-->
+                                        <div class="name" th:text="${food.foodName}"></div>
+                                        <div class="total"><b th:class="${(food.amount gt 1)?'amount':'food_amount'}" th:text="${food.amount}"></b></div>
+                                        <div class="price">￥<span th:text="${food.price}"></span></div>
+                                        <div class="money">￥<b th:text="${food.price*food.amount}"></b></div>
+                                        <div class="operator-div" style="display: none">
+                                            <div><button data-toggle="tooltip" data-placement="bottom" title="打印此菜" class="btn btn-default fa fa-cube" onClick="onClickOperator(this, 'cur')"></button></div>
+                                            <div><button data-toggle="tooltip" data-placement="bottom" title="打印本批" class="btn btn-default fa fa-cubes" onClick="onClickOperator(this, 'batch')"></button></div>
+                                            <div><button data-toggle="tooltip" data-placement="bottom" title="取消此菜" class="btn btn-danger" onClick="onClickOperator(this, \'dddd\')">删</button></div>
+                                        </div>
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7" style="padding-left: 10px">
+                    <div class="content-main">
+                        <input th:value="${order.no}" name="orderNo" type="hidden"/>
+                        <div class="store-name"><b>签王之王-昭通吾悦广场店</b><p>收银台</p></div>
+                        <div class="confirm-div">
+                            <div class="form-group">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon">订单金额：</span>
+                                <span class="form-control"><b class="total-money" style="font-size:22px;">-</b> 元</span>
+                                <div class="input-group-addon">
+                                    <span th:if="${order.removeDot eq '1'}">抹零：<b th:text="${order.dotMoney}"></b> 元</span>
+                                    <span th:if="${order.removeDot eq '0'}">未抹零</span>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="form-group">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon">付款方式：</span>
+                                <div class="form-control" style="padding-top: 5px;">
+                                    <div th:switch="${order.payType}">
+                                    <span th:case="1"><button class="btn btn-info">现金</button></span>
+                                    <span th:case="2"><button class="btn btn-info">微信</button></span>
+                                    <span th:case="3"><button class="btn btn-info">支付宝</button></span>
+                                    <span th:case="4"><button class="btn btn-info">刷卡</button></span>
+                                    <span th:case="5"><button class="btn btn-info">商场</button></span>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">用餐时间：</span>
+                                    <span class="form-control" th:text="${order.createTime}"></span>
+                                    <span class="input-group-addon">~</span>
+                                    <span class="form-control" th:text="${order.endTime}"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">用餐时长：</span>
+                                    <span class="form-control show-seconds-now" th:if="${order.status eq '0'}" th:text="${order.createLong}"></span>
+                                    <span class="form-control show-seconds" th:if="${order.status ne '0'}" th:text="${order.endLong - order.createLong}"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="display: flex">
+                                <div style="flex:1; text-align:left;">
+                                    状态：
+                                    <b th:if="${order.status eq '0'}" style="font-size: 24px; color:#3dbc1d;">就餐中...</b>
+                                    <b th:if="${order.status eq '-1'}" style="font-size: 24px; color:#F00;">订单已关闭</b>
+                                    <b th:if="${order.status eq '1'}" style="font-size: 24px; color:#00F;">订单已完成</b>
+                                </div>
+                                <div style="flex:1; text-align:right;">实付金额：￥ <b style="font-size: 40px; padding-right: 10px; color:#F00;" th:text="${order.totalMoney2}"></b>元</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${order eq null}" class="container" style="background:#FFF; text-align:center; min-height: 300px;">
+                <h2 style="color:#F00; margin-top: 100px">订单不存在</h2>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

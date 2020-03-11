@@ -41,6 +41,35 @@ function showDialog(msg, title) {
     return $(("#"+idStr));
 }
 
+/** bootstrap modal */
+function showLoading(msg, backdrop) {
+	var idStr = "myLoading_"+parseInt(Math.random()*100000000);
+//	if($.trim(title)=='') {title = "<i class='fa fa-info-circle'></i> 系统提示";}
+	var html = '';
+	html += '<div class="modal fade" id="'+idStr+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">' +
+		  	'<div class="modal-dialog" role="document">' +
+		  	'<div class="modal-content">' +
+		  	/*'<div class="modal-header">' +
+		  	'<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+		  	'<h4 class="modal-title" id="myModalLabel">'+title+'</h4>' +
+		  	'</div>' +*/
+		  	'<div class="modal-body" style="text-align:center">'+
+		  	    '<image style="width:200px" src="/basic/admin/loading.gif"/>'+
+		  	    '<div>'+msg+'</div>'+
+		  	'</div>' +
+		  	/*'<div class="modal-footer">' +
+		  	'<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close"></i> 关闭</button>' +
+		  	'</div></div></div></div>';*/
+		  	'</div>';
+
+	$(html).appendTo("body");
+	$(("#"+idStr)).modal({keyboard:true, show:true, backdrop: backdrop});
+	$(("#"+idStr)).on('hidden.bs.modal', function (e) {
+        $(("#"+idStr)).remove();
+    });
+    return $(("#"+idStr));
+}
+
 /** bootstrap 提示框 */
 function confirmDialog(msg, title, okfn, backdrop) {
 	var idStr = "myConfirmDialog_"+parseInt(Math.random()*100000000);

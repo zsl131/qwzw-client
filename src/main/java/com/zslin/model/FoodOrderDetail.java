@@ -7,7 +7,7 @@ import javax.persistence.*;
 /**
  * 订单详情
  *  - 菜品详情
- *
+ *  - 每一样菜品一开始不能合并，否则会导致打印出问题
  */
 @Entity
 @Table(name = "t_food_order_detail")
@@ -17,6 +17,10 @@ public class FoodOrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    /** 批次编号，每一次新增就有一个批次 */
+    @Column(name = "batch_no")
+    private String batchNo;
 
     @Column(name = "order_id")
     private Integer orderId;
@@ -54,4 +58,13 @@ public class FoodOrderDetail {
 
     @Column(name = "food_id")
     private Integer foodId;
+
+    /** 单次下单的单品数量 */
+    private Integer amount;
+
+    /** 单价 */
+    private Float price;
+
+    /** 小计 */
+    private Float subtotal=0f;
 }

@@ -1,15 +1,17 @@
 package com.zslin.test;
 
+import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.SecurityUtil;
 import com.zslin.card.dto.CardCheckDto;
 import com.zslin.card.service.ICardCheckService;
 import com.zslin.model.BuffetOrder;
+import com.zslin.model.DiningTable;
 import com.zslin.model.DiscountTime;
-import com.zslin.service.IBuffetOrderService;
-import com.zslin.service.IDiscountTimeService;
-import com.zslin.service.IMemberChargeService;
+import com.zslin.model.FoodOrderDetail;
+import com.zslin.service.*;
 import com.zslin.tools.*;
 import com.zslin.web.dto.MyTimeDto;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,9 @@ import javax.swing.*;
 import java.awt.print.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by 钟述林 393156105@qq.com on 2017/3/10 15:51.
@@ -58,6 +59,69 @@ public class NormalTest {
 
     @Autowired
     private PictureTools pictureTools;
+
+    @Autowired
+    private IDiningTableService diningTableService;
+
+    @Autowired
+    private IFoodOrderDetailService foodOrderDetailService;
+
+    @Test
+    public void test39() {
+        float res = buildTotalMoney("20200302001");
+        System.out.println(res);
+    }
+
+    private Float buildTotalMoney(String orderNo) {
+        List<FoodOrderDetail> detailList = foodOrderDetailService.findByOrderNo(orderNo, SimpleSortBuilder.generateSort("id"));
+        Float money = 0f;
+        for(FoodOrderDetail d : detailList) {
+            money += (d.getPrice()*d.getAmount());
+        }
+        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println(df.format(money));
+        return Float.parseFloat(df.format(money));
+    }
+
+    @Test
+    public void test38() {
+        List<DiningTable> tableList = diningTableService.findEmptyTableIds();
+        for(DiningTable dt : tableList) {
+            System.out.println(dt);
+        }
+    }
+
+    @Test
+    public void test37() {
+        Map<Integer, List<String>> map = new HashMap<>();
+
+        addData(map, 1, "a");
+        addData(map, 1, "b");
+        addData(map, 1, "c");
+        addData(map, 2, "a");
+        addData(map, 2, "ab");
+        addData(map, 2, "ac");
+        addData(map, 3, "a");
+        addData(map, 3, "acc");
+        for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+    }
+
+    private void addData(Map<Integer, List<String>> map, Integer key, String value) {
+        if(!map.containsKey(key)) {
+            map.put(key, new ArrayList<>());
+        }
+        map.get(key).add(value);
+    }
+
+    @Test
+    public void test36() {
+        for(int i =0;i<20;i++) {
+            Long next = RandomUtils.nextLong(10000000, 99999999);
+            System.out.println("-->"+next);
+        }
+    }
 
     @Test
     public void test35() {

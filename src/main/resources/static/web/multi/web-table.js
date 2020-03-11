@@ -21,7 +21,7 @@ function onOrder(obj) {
     const name = $(obj).attr("title");
     const tableId = $(obj).attr("tableId");
 
-    checkMealing(tableId);
+    if(!checkMealing(tableId)) {return false;}
 
     let countHtml = '';
     for(let i=1;i<=10;i++) {

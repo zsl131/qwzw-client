@@ -29,4 +29,10 @@ public interface IFoodOrderService extends BaseRepository<FoodOrder, Integer>, J
     @Transactional
     @Modifying
     Integer updatePeopleAmount(Integer amount, String orderNo);
+
+    /** 修改总份数 */
+    @Query("UPDATE FoodOrder f SET f.unitCount=?1 WHERE f.no=?2")
+    @Modifying
+    @Transactional
+    void updateUnitCount(Integer unitCount, String orderNo);
 }
