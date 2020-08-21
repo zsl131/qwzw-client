@@ -10,11 +10,12 @@ import com.jacob.com.Variant;
  */
 public class PrintTools2 {
 
-    public static void testPrint(String path) {
-//        PrinterJob
+    /** 使用默认打印机 */
+    public static void print(String path) {
+        print(path, null);
     }
 
-    public static void print(String path) {
+    public static void print(String path, String printerName) {
 //        String path="D:\\yanqiong.doc";
         System.out.println("开始打印");
         ComThread.InitSTA();
@@ -23,6 +24,10 @@ public class PrintTools2 {
             word = new ActiveXComponent("KWPS.Application");
         } catch (Exception e) {
             word = new ActiveXComponent("Word.Application");
+        }
+        //设置打印机
+        if(printerName!=null && !"".equals(printerName)) {
+            word.setProperty("ActivePrinter", new Variant(printerName));
         }
         Dispatch doc=null;
         Dispatch.put(word, "Visible", new Variant(false));

@@ -5,6 +5,7 @@ import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -12,15 +13,31 @@ import java.io.IOException;
  */
 public class PrintTools {
 
+    /**
+     * 打印测试页
+     * @param printerName
+     */
+    public static void printTest(String printerName) {
+        //E:\idea\2020\qwzw-client\src\main\resources
+        String sep = File.separator;
+        String path = System.getProperty("user.dir") + sep + "src" + sep + "main" + sep +
+                "resources" + sep + "word-temp" + sep + "test-print.docx";
+        print(path, printerName);
+    }
+
     public static void print(String path) {
+        print(path, null);
+    }
+
+    public static void print(String path, String printerName) {
         try {
-            new PrintTools().printWord(path);
+            new PrintTools().printWord(path, printerName);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void printWord(String path) {
+    private void printWord(String path, String printerName) {
         ComThread.InitSTA();
 //        ActiveXComponent word=new ActiveXComponent("Word.Application");
         ActiveXComponent word;
@@ -28,6 +45,10 @@ public class PrintTools {
             word = new ActiveXComponent("KWPS.Application");
         } catch (Exception e) {
             word = new ActiveXComponent("Word.Application");
+        }
+        //设置打印机
+        if(printerName!=null && !"".equals(printerName)) {
+            word.setProperty("ActivePrinter", new Variant(printerName));
         }
         Dispatch doc=null;
         Dispatch.put(word, "Visible", new Variant(false));

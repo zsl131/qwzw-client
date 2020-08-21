@@ -200,7 +200,7 @@ public class PrintTicketTools {
 //        Integer count = array[(int)(Math.random()*array.length)];
 //        Integer count = (int)(Math.random()*10)+3;
         String com = buildCommodityCount(order.getNo());
-        System.out.println("============"+com);
+//        System.out.println("============"+com);
         File f = wordTemplateTools.buildVoucherFile(shopName, buildCommodityCount(order.getNo()), order.getTotalMoney()+order.getDiscountMoney(), order.getCreateTime(), phone, address, order.getNo(), order.getCashierName());
 
         PrintTools.print(f.getAbsolutePath());

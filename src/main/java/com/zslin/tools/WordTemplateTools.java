@@ -51,6 +51,11 @@ public class WordTemplateTools {
         return getTemplateFile("voucher-template.docx");
     }
 
+    /** 获取测试打印文件 */
+    public File getTestPrintFile() {
+        return getTemplateFile("test-print.docx");
+    }
+
     public File getTicketTempate() {
         return getTemplateFile("ticket-template.docx");
     }

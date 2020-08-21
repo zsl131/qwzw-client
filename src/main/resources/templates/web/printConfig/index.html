@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/qwzw/printConfig.css"/>
+    <script type="text/javascript" src="/web/qwzw/printConfig.js"></script>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div ">
+            <form method="POST" th:object="${printConfig}" id="dataForm" style="background:#FFF; padding:10px;">
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">吧台打印机名称：</div>
+                        <input name="printName1" type="text" class="form-control" th:value="${printConfig.printName1}" placeholder="请输入吧台打印机名称，在设置-打印机列表中查看" />
+                        <span class="input-group-addon print-test-class">打印测试</span>
+                    </div>
+                </div>
+
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">厨房打印机名称：</div>
+                        <input name="printName2" type="text" class="form-control" th:value="${printConfig.printName2}" placeholder="请输入厨房打印机名称，在设置-打印机列表中查看" />
+                        <span class="input-group-addon print-test-class">打印测试</span>
+                    </div>
+                </div>
+                <input type="hidden" name="token" value="${session.token}"/>
+                <button type="submit" class="btn btn-primary">确定提交</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

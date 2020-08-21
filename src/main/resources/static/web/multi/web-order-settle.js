@@ -44,6 +44,7 @@ function setTotalMoney() {
     $(".food-list-container").find("li").each(function() {
         money += parseFloat($(this).find(".money").find("b").html());
     })
+    money = money.toFixed(2); //保留两位小数
     $(".total-money").html(money);
     $(".total-money2").html(money);
     changeCheck(); //检测是否要抹零

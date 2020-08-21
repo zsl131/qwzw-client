@@ -24,7 +24,7 @@ public class PrintTest {
 
     @Test
     public void test01() {
-        File file = new File("D:/temp123.doc"); // 获取选择的文件
+        File file = new File("D:/temp/qwzw-print.doc"); // 获取选择的文件
         // 构建打印请求属性集
         HashPrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
         // 设置打印格式，因为未确定类型，所以选择autosense
@@ -53,12 +53,25 @@ public class PrintTest {
 
     @Test
     public void test02() throws Exception {
-        PrintTools.printFile("D:/temp123.docx");
+        PrintTools.printFile("D:/temp/qwzw-print.doc");
     }
 
     @Test
     public void test03() {
-        PrintTools2.print("D:/temp/temp123.docx");
+        PrintTools2.print("D:/temp/qwzw-print.doc");
+    }
+
+    @Test
+    public void test07() {
+        PrintTools2.print("D:/temp/qwzw-print.doc", "XP-58C-2");
+        PrintTools2.print("D:/temp/qwzw-print.doc", "XP-58C-3");
+        PrintTools2.print("D:/temp/qwzw-print.doc");
+    }
+
+    @Test
+    public void test08() {
+        System.out.println(System.getProperty("user.dir"));
+        //E:\idea\2020\qwzw-client\src\main\resources
     }
 
     @Test

@@ -207,6 +207,7 @@ public class WebFoodOrderController {
                 fod.setPrintStatus("0");
                 fod.setAmount(dto.getAmount());
                 fod.setPrice(food.getPrice());
+                fod.setPrintFlag(food.getPrintFlag());
                 fod.setSubtotal(food.getPrice()*dto.getAmount());
                 foodOrderDetailService.save(fod);
 

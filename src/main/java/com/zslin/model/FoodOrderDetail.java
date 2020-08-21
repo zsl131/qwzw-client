@@ -44,7 +44,11 @@ public class FoodOrderDetail {
     @Column(name = "print_status")
     private String printStatus;
 
-    @Column(name = "cate_id")
+    /** 打印次数 */
+    @Column(name = "print_count")
+     private Integer printCount = 0;
+
+   @Column(name = "cate_id")
     private Integer cateId;
 
     @Column(name = "cate_name")
@@ -67,4 +71,8 @@ public class FoodOrderDetail {
 
     /** 小计 */
     private Float subtotal=0f;
+
+    /** 打印标记 */
+    @Column(name = "print_flag")
+    private String printFlag;
 }

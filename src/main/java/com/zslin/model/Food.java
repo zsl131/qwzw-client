@@ -75,6 +75,18 @@ public class Food {
     @Column(name = "sn_no")
     private Integer snNo;
 
+    /** 打印标记，1-吧台；2-厨房；all-全部 */
+    @Column(name = "print_flag")
+    private String printFlag="all";
+
+    public String getPrintFlag() {
+        return printFlag;
+    }
+
+    public void setPrintFlag(String printFlag) {
+        this.printFlag = printFlag;
+    }
+
     public Integer getSnNo() {
         return snNo;
     }

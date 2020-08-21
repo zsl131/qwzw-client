@@ -30,10 +30,17 @@ function buildTime(seconds) {
     } else if(seconds>=60 && seconds<3600){
         var min = parseInt(seconds/60);
         return min+"分"+(seconds%60)+"秒";
-    } else {
+    } else if(seconds>=3600 && seconds<3600*24) {
         var hour = parseInt(seconds/3600);
         var surplus = seconds%3600;
         var min = parseInt(surplus/60);
         return hour+"时"+min+"分"+(surplus%60)+"秒";
+    } else {
+        var day = parseInt(seconds/(3600*24));
+        var surplus = seconds%(3600*24);
+        var hour = parseInt(surplus/3600);
+        surplus = surplus%3600;
+        var min = parseInt(surplus/60);
+        return day+"天"+hour+"时"+min+"分"+(surplus%60)+"秒";
     }
 }

@@ -12,4 +12,6 @@ public interface IFoodOrderDetailService extends BaseRepository<FoodOrderDetail,
     List<FoodOrderDetail> findByOrderId(Integer orderId);
 
     List<FoodOrderDetail> findByOrderNo(String orderNo, Sort sort);
+
+    List<FoodOrderDetail> findByOrderNoAndBatchNo(String orderNo, String batchNo);
 }
