@@ -21,6 +21,18 @@ public class PrintConfig {
     @Column(name = "print_name2")
     private String printName2;
 
+    /** 甜品店打印机名称 */
+    @Column(name = "print_name3")
+    private String printName3;
+
+    public String getPrintName3() {
+        return printName3;
+    }
+
+    public void setPrintName3(String printName3) {
+        this.printName3 = printName3;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -3,6 +3,8 @@ package com.zslin.web.controller;
 import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.NormalTools;
 import com.zslin.model.*;
+import com.zslin.qwzw.tools.FoodDataTools;
+import com.zslin.qwzw.tools.RefundFoodTools;
 import com.zslin.service.*;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.WorkerCookieTools;
@@ -20,9 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("web/foodOrder")
@@ -49,15 +49,38 @@ public class WebFoodOrderController {
     @Autowired
     private IFoodOrderDetailService foodOrderDetailService;
 
+    @Autowired
+    private FoodDataTools foodDataTools;
+
+    @Autowired
+    private RefundFoodTools refundFoodTools;
+
+    @Autowired
+    private IRefundOrderFoodService refundOrderFoodService;
+
     /** 订单详情 */
     @GetMapping(value = "show")
     public String show(Model model, String orderNo) {
         FoodOrder order = foodOrderService.findByNo(orderNo);
         List<FoodOrderDetail> detailList = foodOrderDetailService.findByOrderNo(orderNo, SimpleSortBuilder.generateSort("id"));
-        detailList = rebuildFoodDetail(detailList);
+        detailList = FoodDataTools.rebuildFoodDetail(detailList);
         model.addAttribute("order", order);
         model.addAttribute("detailList", detailList);
         return "web/foodOrder/show";
+    }
+
+    /**
+     * 退菜处理
+     * @param orderNo
+     * @param foodId
+     * @param refundAmount
+     * @return
+     */
+    @PostMapping(value = "refundFood")
+    public @ResponseBody String refundFood(String orderNo, Integer foodId, Integer refundAmount) {
+//        List<FoodOrderDetail> list = foodOrderDetailService.findByOrderNoAndFoodId(orderNo, foodId);
+        refundFoodTools.refund(orderNo, foodId, refundAmount);
+        return "1";
     }
 
     @PostMapping(value = "settlement")
@@ -146,40 +169,13 @@ public class WebFoodOrderController {
         FoodOrder order = foodOrderService.findByNo(orderNo); //订单
         if(order==null || !"0".equals(order.getStatus())) {return buildShowUrl(orderNo);}
         List<FoodOrderDetail> detailList = foodOrderDetailService.findByOrderNo(orderNo, SimpleSortBuilder.generateSort("id"));
-        detailList = rebuildFoodDetail(detailList);
+        detailList = FoodDataTools.rebuildFoodDetail(detailList);
+
+        List<RefundOrderFood> refundList = refundOrderFoodService.findByOrderNo(orderNo);
         model.addAttribute("order", order);
         model.addAttribute("detailList", detailList);
+        model.addAttribute("refundList", refundList);
         return "web/foodOrder/onSettle";
-    }
-
-    private List<FoodOrderDetail> rebuildFoodDetail(List<FoodOrderDetail> detailList) {
-        if(detailList==null) {return new ArrayList<>();}
-        Map<Integer, List<FoodOrderDetail>> map = new HashMap<>();
-        for(FoodOrderDetail fod : detailList) {
-            setData(map, fod.getFoodId(), fod);
-        }
-        return rebuildFood(map);
-    }
-
-    private void setData(Map<Integer, List<FoodOrderDetail>> map, Integer key, FoodOrderDetail value) {
-        if(!map.containsKey(key)) {
-            map.put(key, new ArrayList<>());
-        }
-        map.get(key).add(value);
-    }
-
-    private List<FoodOrderDetail> rebuildFood(Map<Integer, List<FoodOrderDetail>> detailMap) {
-        List<FoodOrderDetail> res = new ArrayList<>();
-        for (Map.Entry<Integer, List<FoodOrderDetail>> entry : detailMap.entrySet()) {
-            List<FoodOrderDetail> list = entry.getValue();
-            Integer amount = 0; FoodOrderDetail detail=null;
-            for(FoodOrderDetail fod : list) {amount += fod.getAmount(); detail = fod;}
-            if(detail!=null) {
-                detail.setAmount(amount);
-                res.add(detail);
-            }
-        }
-        return res;
     }
 
     @PostMapping(value = "appendFood")
@@ -214,10 +210,26 @@ public class WebFoodOrderController {
                 unitAmount += fod.getAmount();
             }
             foodOrderService.updateUnitCount(unitAmount, orderNo);
+
+            foodDataTools.printFood(orderNo, batchNo);
         } catch (Exception e) {
             e.printStackTrace();
             return "出错："+e.getMessage();
         }
+        return "1";
+    }
+
+    /** 打印批次菜品 */
+    @PostMapping(value = "print")
+    public @ResponseBody String print(String orderNo, String batchNo, String isFirst) {
+        foodDataTools.printFood(orderNo, batchNo, isFirst);
+        return "1";
+    }
+
+    /** 打印预结单 */
+    @PostMapping(value = "printSettle")
+    public @ResponseBody String printSettle(String orderNo) {
+        foodDataTools.printFoodSettle(orderNo);
         return "1";
     }
 

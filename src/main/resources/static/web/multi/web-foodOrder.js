@@ -61,7 +61,7 @@ function rebuildBasket(obj) {
     } else { //如果不存在
         html += '<li class="new-append" foodId="'+foodId+'" price="'+price+'"  onmouseenter="onOperator(this)"  onmouseleave="finishOperator(this)">'+
             '<div class="name">'+foodName+'</div>'+
-            '<div class="price">￥'+price+'x<b class="food_amount">1</b></div>'+
+            '<div class="price" onClick="onModifyAmount(this)" data-toggle="tooltip" data-placement="top" title="点击这里修改数量">￥'+price+'x<b class="food_amount">1</b></div>'+
             '<div class="total">￥'+price+'</div>'+
             '<div class="operator-div" style="display: none">' +
                 '<div title="数量减少"><button class="btn btn-default" onClick="onClickOperator(this, \'-\')">-</button></div>'+
@@ -76,12 +76,39 @@ function rebuildBasket(obj) {
     calAppendTotalMoney(); //重新计算金额
 }
 
+function onModifyAmount(obj) {
+    var foodName = $(obj).parents("li").find(".name").html();
+    var foodAmount = parseInt($(obj).find(".food_amount").html()); //数量
+
+    var html = "<div>"+
+                "<p>菜品名称：<b class='red'>"+foodName+"</b></p>"+
+                "<input type='number' name='amount' title='请输入具体数量，只能输入正整数' placeholder='输入数量' class='form-control' value='"+foodAmount+"'/></div>";
+    var dialog = confirmDialog(html, "修改菜品数量", function() {
+        //console.log("----")
+        var amount = parseInt($(dialog).find("input[name='amount']").val());
+        if(amount>0) {
+            $(obj).find(".food_amount").html(amount);
+            if(amount>1) {
+                $(obj).find(".food_amount").addClass("amount");
+            } else {
+                $(obj).find(".food_amount").removeClass("amount");
+            }
+            calAppendTotalMoney(); //重新计算金额
+            $(dialog).remove();
+        } else {
+            showDialog("请输入正整数", "系统提示");
+        }
+    })
+}
+
 //点击操作按钮
 function onClickOperator(obj, flag) {
-    const pobj = $(obj).parents("li");
-    const price = $(pobj).attr("price");
-    const foodId = $(pobj).attr("foodId");
-    const curAmount = parseInt($(pobj).find(".food_amount").html());
+    var pobj = $(obj).parents("li");
+    var price = $(pobj).attr("price");
+    var foodId = $(pobj).attr("foodId");
+    var curAmount = parseInt($(pobj).find(".food_amount").html());
+    var orderNo = $(pobj).attr("orderNo"); var batchNo = $(pobj).attr("batchNo");
+    console.log(orderNo, batchNo)
     if("-"==flag) {
         if(curAmount>1) {
             $(pobj).find(".food_amount").html(curAmount-1);
@@ -99,7 +126,7 @@ function onClickOperator(obj, flag) {
         $(pobj).find(".food_amount").html(curAmount+1);
         $(pobj).find(".total").html("￥"+((curAmount+1)*price));
     } else if("d"==flag) {
-        const foodName = $(pobj).find(".name").html();
+        var foodName = $(pobj).find(".name").html();
         var delDialog = confirmDialog("确定移除【"+foodName+"】吗？", "系统提示", function() {
             $(pobj).remove();
             $(delDialog).remove();
@@ -108,6 +135,12 @@ function onClickOperator(obj, flag) {
     } else if("cur"==flag) { //打印当前菜品
 
     } else if("batch"==flag) { //打印本批次
+        var printDialog = confirmDialog("确定要重新打印本批次菜品吗【"+batchNo+"】？请注意不要重复出菜哦！", "系统提示", function() {
+            $.post("/web/foodOrder/print", {orderNo: orderNo, batchNo: batchNo, isFirst: "0"}, function(res) {
+                if(res=='1') {alert("打印成功，注意查看打印机");}
+            });
+            $(printDialog).remove();
+        })
     } else if("dd" == flag) {
     }
     calAppendTotalMoney(); //重新计算金额

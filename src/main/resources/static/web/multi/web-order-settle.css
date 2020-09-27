@@ -67,3 +67,13 @@
     border: 2px #3daae6 solid; background:#FFF; border-radius: 5px;
 }
 
+.food-list-container li {
+    cursor: pointer;
+}
+.food-list-container li:hover {
+    background:#d7f5ff;
+}
+
+.amount {color:#F00;}
+
+.red-badge {color:#FFF; background:#F00;}

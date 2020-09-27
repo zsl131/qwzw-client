@@ -26,7 +26,17 @@
                             <div style="flex: 1">桌号：<b th:text="${order.tableName}"></b></div>
                             <div style="flex: 1">人数：<b th:text="${order.amount}"></b></div>
                         </div>
-                        <div class="food-list">
+
+                        <ul class="nav nav-tabs food-nav-ul" style="margin-top:8px">
+                            <li class="already-nav active" targetCls="food-list">
+                                <a class="dropdown-toggle" href="#">有效菜品</a>
+                            </li>
+                            <li class="new-append-nav" targetCls="refund-food-list">
+                                <a class="dropdown-toggle">已退菜品</a>
+                            </li>
+                        </ul>
+
+                        <div class="food-list nav-con-div">
                             <ul class="normal-food-ul">
                                 <li class="header">
                                     <div class="price">品名</div>
@@ -49,6 +59,10 @@
                                     </li>
                                 </div>
                             </ul>
+                        </div>
+
+                        <div class="refund-food-list nav-con-div" style="display:none">
+                            ---------
                         </div>
                     </div>
                 </div>

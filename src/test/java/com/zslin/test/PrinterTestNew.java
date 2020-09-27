@@ -1,5 +1,6 @@
 package com.zslin.test;
 
+import com.zslin.qwzw.tools.FoodDataTools;
 import com.zslin.test.printer.PrintTscUtil;
 import com.zslin.test.printer.Tools1;
 import com.zslin.tools.PrintTemplateTools;
@@ -23,12 +24,20 @@ public class PrinterTestNew {
     @Autowired
     private PrintTemplateTools printTemplateTools;
 
+    @Autowired
+    private FoodDataTools foodDataTools;
+
     @Test
+    public void test05() {
+        foodDataTools.printFood("20200916001", "1860");
+    }
+
+    /*@Test
     public void test04() {
         String details = "这奇才阿斯蒂芬工\\n阿斯蒂芬琪苦";
         printTemplateTools.buildFoodFile("签王之王昭通店", "厨房",
-                "4号桌", 6, "2020031001", "001", details);
-    }
+                "4号桌", 6, "20200916001", "7838", details);
+    }*/
 
     @Test
     public void test01() {

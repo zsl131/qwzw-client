@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Column;
 import java.util.List;
 
 public interface IFoodOrderService extends BaseRepository<FoodOrder, Integer>, JpaSpecificationExecutor<FoodOrder> {
@@ -35,4 +36,34 @@ public interface IFoodOrderService extends BaseRepository<FoodOrder, Integer>, J
     @Modifying
     @Transactional
     void updateUnitCount(Integer unitCount, String orderNo);
+
+    /**  */
+    @Query("SELECT COUNT(f.id) FROM FoodOrder f WHERE f.createDay=?1 AND f.status!='-1'")
+    Integer deskCount(String createDay);
+
+    @Query("SELECT COUNT(f.id) FROM FoodOrder f WHERE f.createDay=?1 AND f.status!=?2")
+    Integer deskCount(String createDay, String status);
+
+    @Query("SELECT SUM(f.amount) FROM FoodOrder f WHERE f.createDay=?1  AND f.status!='-1'")
+    Integer peopleCount(String createDay);
+
+    /** 抹零的数量 */
+    @Query("SELECT COUNT(f.id) FROM FoodOrder f WHERE f.createDay=?1 AND f.removeDot='1'")
+    Integer dotCount(String createDay);
+
+    /** 抹零金额 */
+    @Query("SELECT SUM(f.dotMoney) FROM FoodOrder f WHERE f.createDay=?1 AND f.dotMoney>0")
+    Float dotMoney(String createDay);
+
+    /** 未结束的订单数 */
+    @Query("SELECT COUNT(f.id) FROM FoodOrder f WHERE f.createDay=?1 AND f.status='-1'")
+    Integer unEndCount(String createDay);
+
+    /** 总金额，含抹零金额 */
+    @Query("SELECT SUM(f.totalMoney) FROM FoodOrder f WHERE f.createDay=?1 AND f.status!='-1'")
+    Float totalMoney(String day);
+
+    /** 不同付款方式的金额 */
+    @Query("SELECT SUM(f.totalMoney2) FROM FoodOrder f WHERE f.createDay=?1 AND f.status!='-1' AND f.payType=?2 ")
+    Float payMoney(String day, String payType);
 }

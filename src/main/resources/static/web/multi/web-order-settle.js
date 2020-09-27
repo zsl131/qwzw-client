@@ -8,7 +8,73 @@ $(function() {
         $(".pay-type-div").find("button."+activeCls).removeClass(activeCls);
         $(this).addClass(activeCls);
     });
+
+    $(".food-nav-ul").find("li").click(function() {
+        $(".food-nav-ul").find("li.active").removeClass("active");
+        $(this).addClass("active");
+
+        $(".nav-con-div").each(function() {$(this).css("display", "none")});
+        $(("."+$(this).attr("targetCls"))).css("display", "block");
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    setCount();
 });
+
+function setCount() {
+    var usefulCount = 0 ; var refundCount = 0 ;
+    $(".food-list-container").find("li").each(function() {
+        usefulCount += parseInt($(this).find(".total").find("b").html());
+    });
+    $(".refund-list-container").find("li").each(function() {
+        refundCount += parseInt($(this).find(".total").find("b").html())
+    })
+
+    $(".useful-badge").html(usefulCount); $(".refund-badge").html(refundCount);
+}
+
+function printOrder() {
+    var orderNo = $("input[name='orderNo']").val();
+    var conDialog = confirmDialog("确定打印预结单吗？", "操作提示", function() {
+        $.post("/web/foodOrder/printSettle", {orderNo: orderNo}, function(res) {
+            if(res=='1') {alert("打印成功，请注意打印机");}
+        })
+        $(conDialog).remove();
+    });
+}
+
+function refundFood(obj) {
+    //foodId=${food.foodId},foodName=${food.foodName},batchNo=${food.batchNo},detailId=${food.id}
+    var foodId = $(obj).attr("foodId"); var foodName = $(obj).attr("foodName");
+    var orderNo = $("input[name='orderNo']").val(); var detailId = $(obj).attr("detailId");
+    var amount = parseInt($(obj).find(".total").find('b').html()); //最大数量
+    //console.log(foodId, foodName)
+    //console.log(orderNo, detailId)
+    //console.log(amount)
+    var html = '<div>'+
+                '<p>菜品：<b style="color:#F00;">'+foodName+'</b></p>'+
+                '<div class="input-group">'+
+                '<span class="input-group-addon" >需退数量</span>'+
+                '<input type="number" name="refund-amount" placeholder="请输入要退的数量，且不能大于 '+amount+'" class="form-control"/></div>'+
+                '<p style="margin-top:10px;"><b>注意：</b>输入的数量必须是正整数，且不大于  <b style="color:#F00; font-size: 18px;">'+amount+'</b></p>'+
+                '</div>';
+    const conDialog = confirmDialog(html, "退菜操作【"+foodName+"】", function() {
+        var refundAmount = parseInt($(conDialog).find("input[name='refund-amount']").val());
+        if(!refundAmount || refundAmount<=0 || refundAmount>amount) {
+            showDialog("请认真输入需退数量，且不能大于 "+amount, "操作警告");
+        } else {
+            $.post("/web/foodOrder/refundFood", {orderNo: orderNo, foodId: foodId, refundAmount: refundAmount}, function(res) {
+                if(res=='1') {
+                    alert("操作成功"); window.location.reload();
+                }
+            });
+            $(conDialog).remove();
+        }
+        /*$.post("/web/foodOrder/settlement", {orderNo:orderNo, totalMoney: totalMoney, removeDot: removeDot, payType: payType}, function(res) {
+        })*/
+    });
+}
 
 function submitMoney() {
 //    console.log($(".pay-type-div").html())
@@ -29,7 +95,7 @@ function submitMoney() {
                     showDialog("订单金额和传入金额不一致", "系统提示");
                     setTimeout(function() {window.location.reload();}, 2500);
                 } else if("1"==res) {
-                    showDialog("对账成功", "系统提示");
+                    showDialog("操作成功", "系统提示");
                     setTimeout(function() {window.location.reload();}, 2500);
                 }
             })

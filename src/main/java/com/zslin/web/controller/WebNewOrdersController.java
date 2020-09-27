@@ -1,10 +1,10 @@
 package com.zslin.web.controller;
 
 import com.zslin.basic.annotations.AdminAuth;
+import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.NormalTools;
-import com.zslin.model.BuffetOrder;
-import com.zslin.model.Income;
-import com.zslin.model.Prize;
+import com.zslin.model.*;
+import com.zslin.qwzw.tools.FoodDataTools;
 import com.zslin.service.*;
 import com.zslin.upload.tools.UploadFileTools;
 import com.zslin.upload.tools.UploadJsonTools;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,15 @@ public class WebNewOrdersController {
     @Autowired
     private UploadFileTools uploadFileTools;
 
+    @Autowired
+    private IFoodOrderService foodOrderService;
+
+    @Autowired
+    private IFoodOrderDetailService foodOrderDetailService;
+
+    @Autowired
+    private IRefundOrderFoodService refundOrderFoodService;
+
     //会员充值统计
     private void calMemberCharge(Model model, String day) {
         Float mCash = memberChargeService.queryMoneyByPayType(day, "1"); //会员现金
@@ -75,80 +85,39 @@ public class WebNewOrdersController {
 
         MyTimeDto mtd = new MyTimeDto(day);
 
-        queryCount(day, model);
-        queryTotalMoney(mtd, model);
-        model.addAttribute("day", day);
-        calMemberCharge(model, day);
+        Integer deskCount = foodOrderService.deskCount(day); //人数
+        Integer peopleCount = foodOrderService.peopleCount(day); //桌数
 
-        Float discountMoneyAM = buffetOrderService.queryDiscountMoneyByTime(mtd.getStartTimeAM(), mtd.getEndTimeAM());
-        discountMoneyAM = discountMoneyAM==null?0:discountMoneyAM;
-        model.addAttribute("discountMoneyAM", discountMoneyAM); //时段折扣金额
-        Float discountMoneyPM = buffetOrderService.queryDiscountMoneyByTime(mtd.getStartTimePM(), mtd.getEndTimePM());
-        discountMoneyPM = discountMoneyPM==null?0:discountMoneyPM;
-        model.addAttribute("discountMoneyPM", discountMoneyPM); //时段折扣金额
-        model.addAttribute("discountMoney", discountMoneyAM+discountMoneyPM);
+        Integer dotCount = foodOrderService.dotCount(day); //抹零数量
+        Float dotMoney = foodOrderService.dotMoney(day); //抹零金额
 
-        Float discountDayMoneyAM = buffetOrderService.queryDiscountDayMoneyByTime(mtd.getStartTimeAM(), mtd.getEndTimeAM());
-        discountDayMoneyAM = discountDayMoneyAM==null?0:discountDayMoneyAM;
-        model.addAttribute("discountDayMoneyAM", discountDayMoneyAM); //折扣日金额
-        Float discountDayMoneyPM = buffetOrderService.queryDiscountDayMoneyByTime(mtd.getStartTimePM(), mtd.getEndTimePM());
-        discountDayMoneyPM = discountDayMoneyPM==null?0:discountDayMoneyPM;
-        model.addAttribute("discountDayMoneyPM", discountDayMoneyPM); //折扣日金额
-        model.addAttribute("discountDayMoney", discountDayMoneyAM+discountDayMoneyPM);
+        List<FoodOrderDetail> detailList = foodOrderDetailService.findByCreateDay(day, SimpleSortBuilder.generateSort("foodId"));
+        detailList = FoodDataTools.rebuildFoodDetail(detailList);
 
-        Float marketMoneyAM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimeAM(), mtd.getEndTimeAM(), "5");
-        model.addAttribute("marketMoneyAM", marketMoneyAM==null?0:marketMoneyAM); //商场签单
-        Float marketMoneyPM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimePM(), mtd.getEndTimePM(), "5");
-        model.addAttribute("marketMoneyPM", marketMoneyPM==null?0:marketMoneyPM); //商场签单
+        model.addAttribute("deskCount", deskCount);
+        model.addAttribute("deskCount", foodOrderService.deskCount(day, "-1")); //关闭桌数
+        model.addAttribute("peopleCount", peopleCount);
+        model.addAttribute("dotCount", dotCount);
+        model.addAttribute("dotMoney", dotMoney);
+        model.addAttribute("unEndCount", foodOrderService.unEndCount(day)); //未结束数量
+        model.addAttribute("totalMoney", foodOrderService.totalMoney(day)); //总金额，含抹零金额
 
-        Float meituanMoneyAM = buffetOrderService.queryMoneyByMeiTuan(mtd.getStartTimeAM(), mtd.getEndTimeAM());
-        model.addAttribute("meituanMoneyAM", meituanMoneyAM==null?0:meituanMoneyAM); //美团
-        Float meituanMoneyPM = buffetOrderService.queryMoneyByMeiTuan(mtd.getStartTimePM(), mtd.getEndTimePM());
-        model.addAttribute("meituanMoneyPM", meituanMoneyPM==null?0:meituanMoneyPM); //美团
+        Float wxMoney = foodOrderService.payMoney(day, "2");
+        Float alipayMoney = foodOrderService.payMoney(day, "3");
+        model.addAttribute("wxMoney", wxMoney==null?0:wxMoney); //微信金额
+        model.addAttribute("alipayMoney", alipayMoney==null?0:alipayMoney); //支付宝金额
 
-        Float ffanMoneyAM = buffetOrderService.queryMoneyByFfan(mtd.getStartTimeAM(), mtd.getEndTimeAM());
-        model.addAttribute("ffanMoneyAM", ffanMoneyAM==null?0:ffanMoneyAM); //飞凡
-        Float ffanMoneyPM = buffetOrderService.queryMoneyByFfan(mtd.getStartTimePM(), mtd.getEndTimePM());
-        model.addAttribute("ffanMoneyPM", ffanMoneyPM==null?0:ffanMoneyPM); //飞凡
+        model.addAttribute("detailList", detailList);
 
-        Float ticketMoneyAM = buffetOrderService.queryMoneyByTicket(mtd.getStartTimeAM(), mtd.getEndTimeAM());
-        model.addAttribute("ticketMoneyAM", ticketMoneyAM==null?0:ticketMoneyAM); //卡券
-        Float ticketMoneyPM = buffetOrderService.queryMoneyByTicket(mtd.getStartTimePM(), mtd.getEndTimePM());
-        model.addAttribute("ticketMoneyPM", ticketMoneyPM==null?0:ticketMoneyPM); //卡券
+        List<RefundOrderFood> refundList = refundOrderFoodService.findByCreateDay(day);
+        model.addAttribute("refundList", refundList);
 
-        Float weixinMoneyAM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimeAM(), mtd.getEndTimeAM(), "3");
-        model.addAttribute("weixinMoneyAM", weixinMoneyAM==null?0:weixinMoneyAM); //微信支付
-        Float weixinMoneyPM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimePM(), mtd.getEndTimePM(), "3");
-        model.addAttribute("weixinMoneyPM", weixinMoneyPM==null?0:weixinMoneyPM); //微信支付
-
-        Float alipayMoneyAM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimeAM(), mtd.getEndTimeAM(), "4");
-        model.addAttribute("alipayMoneyAM", alipayMoneyAM==null?0:alipayMoneyAM); //支付宝
-        Float alipayMoneyPM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimePM(), mtd.getEndTimePM(), "4");
-        model.addAttribute("alipayMoneyPM", alipayMoneyPM==null?0:alipayMoneyPM); //支付宝
-
-        Float cashMoneyAM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimeAM(), mtd.getEndTimeAM(), "1");
-        model.addAttribute("cashMoneyAM", cashMoneyAM==null?0:cashMoneyAM); //现金
-        Float cashMoneyPM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimePM(), mtd.getEndTimePM(), "1");
-        model.addAttribute("cashMoneyPM", cashMoneyPM==null?0:cashMoneyPM); //现金
-
-        Float cardMoneyAM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimeAM(), mtd.getEndTimeAM(), "2");
-        model.addAttribute("cardMoneyAM", cardMoneyAM==null?0:cardMoneyAM); //刷卡
-        Float cardMoneyPM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimePM(), mtd.getEndTimePM(), "2");
-        model.addAttribute("cardMoneyPM", cardMoneyPM==null?0:cardMoneyPM); //刷卡
-
-//        calTicket(mtd, model);
-        calMeituan(mtd, model);
-        calFfan(mtd, model);
-        buildMemberMoney(mtd, model);
-        calScoreMoney(mtd, model);
-        buildBond(mtd, model);
-        buildBondMoney(mtd, model);
         model.addAttribute("income", incomeService.findByComeDay(day.replaceAll("-", "")));
         return "web/newOrders/cal";
     }
 
     @PostMapping(value = "addIncome")
-    public @ResponseBody String addIncome(String day, Float money, Integer peopleCount) {
+    public @ResponseBody String addIncome(String day, Float money, Integer peopleCount, Integer todayTotalDesk) {
         day = day.replaceAll("-", "");
         Income income = incomeService.findByComeDay(day);
         if(income==null) {
@@ -157,8 +126,9 @@ public class WebNewOrdersController {
         }
         income.setMoney(money);
         income.setPeopleCount(peopleCount);
+        income.setDeskCount(todayTotalDesk);
         incomeService.save(income);
-        sendIncome2Server(income);
+//        sendIncome2Server(income); //TODO 先暂时不提交到服务端
         return "1";
     }
 

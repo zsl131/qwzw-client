@@ -29,6 +29,14 @@
                         <span class="input-group-addon print-test-class">打印测试</span>
                     </div>
                 </div>
+
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">甜品站打印机名称：</div>
+                        <input name="printName3" type="text" class="form-control" th:value="${printConfig.printName3}" placeholder="请输入甜品站打印机名称，在设置-打印机列表中查看" />
+                        <span class="input-group-addon print-test-class">打印测试</span>
+                    </div>
+                </div>
                 <input type="hidden" name="token" value="${session.token}"/>
                 <button type="submit" class="btn btn-primary">确定提交</button>
             </form>

@@ -69,7 +69,7 @@
                                 <div class="order-menu-main">
                                     <p class="store-name">签王之王-昭通吾悦广场店</p>
                                     <div class="order-no">
-                                        订单编号：<a th:href="|/web/foodOrder/show?orderNo=${order.no}|" style="text-decoration:none;"><b th:text="${order.no}"></b></a>
+                                        订单编号：<a th:href="|/web/foodOrder/onSettle?orderNo=${order.no}|" style="text-decoration:none;"><b th:text="${order.no}"></b></a>
                                     </div>
                                     <div class="table-info-main" data-toggle="tooltip" data-placement="top" title="可在这里修改用餐人数">
                                         <div class="table-name"  style="text-align:right; padding-right: 10px;">桌号：<b th:text="${table.name}"></b></div>
@@ -88,6 +88,7 @@
                                             <a class="dropdown-toggle">新增菜品&nbsp;<span class="badge red-badge append-badge"></span></a>
                                         </li>
                                     </ul>
+
                                     <!-- 已经提交过后的菜品列表 -->
                                     <div class="already-food-list nav-con-div">
                                         <ul class="already-food-ul normal-food-ul">
@@ -98,14 +99,14 @@
                                             </li>
                                             <!-- 用于存放菜品 -->
                                             <div class="already-food-list-container">
-                                                <li th:each="food : ${detailList}"  th:attr="foodId=${food.foodId},foodName=${food.foodName},batchNo=${food.batchNo},detailId=${food.id}"  onmouseenter="onOperator(this)"  onmouseleave="finishOperator(this)">
+                                                <li th:each="food : ${detailList}"  th:attr="foodId=${food.foodId},foodName=${food.foodName},orderNo=${food.orderNo},batchNo=${food.batchNo},detailId=${food.id}"  onmouseenter="onOperator(this)"  onmouseleave="finishOperator(this)">
                                                     <div class="name" th:text="${food.batchNo}"></div>
                                                     <div class="name1" th:text="${food.foodName}"></div>
                                                     <div class="price"><b th:class="${(food.amount gt 1)?'amount':'food_amount'}" th:text="${food.amount}"></b></div>
                                                     <div class="operator-div" style="display: none">
-                                                        <div><button data-toggle="tooltip" data-placement="bottom" title="打印此菜" class="btn btn-default fa fa-cube" onClick="onClickOperator(this, 'cur')"></button></div>
+                                                        <!--<div><button data-toggle="tooltip" data-placement="bottom" title="打印此菜" class="btn btn-default fa fa-cube" onClick="onClickOperator(this, 'cur')"></button></div>-->
                                                         <div><button data-toggle="tooltip" data-placement="bottom" title="打印本批" class="btn btn-default fa fa-cubes" onClick="onClickOperator(this, 'batch')"></button></div>
-                                                        <div><button data-toggle="tooltip" data-placement="bottom" title="取消此菜" class="btn btn-danger" onClick="onClickOperator(this, \'dddd\')">删</button></div>
+                                                        <!--<div><button data-toggle="tooltip" data-placement="bottom" title="取消此菜" class="btn btn-danger" onClick="onClickOperator(this, \'dddd\')">删</button></div>-->
                                                         </div>
                                                     </li>
                                             </div>

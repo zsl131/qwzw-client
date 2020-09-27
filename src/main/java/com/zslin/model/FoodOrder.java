@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Table(name = "t_food_order")
 @Data
 public class FoodOrder {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -70,6 +69,14 @@ public class FoodOrder {
     /** 付款方式，只有到店下单才会有此值；1-现金；2-微信；3-支付宝支付；4-刷卡；5-商场支付 */
     @Column(name = "pay_type")
     private String payType;
+
+    /** 是否有退菜情况 */
+    @Column(name = "has_refund")
+    private String hasRefund = "0";
+
+    /** 退菜金额 */
+    @Column(name = "refund_money")
+    private Float refundMoney = 0f;
 
     /** 收银金额，只是餐费，不包含压金 */
     @Column(name = "total_money")

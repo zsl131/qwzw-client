@@ -23,6 +23,18 @@ public class Income {
     @Column(name = "people_count")
     private Integer peopleCount = 0;
 
+    /** 桌数 */
+    @Column(name = "desk_count")
+    private Integer deskCount = 0;
+
+    public Integer getDeskCount() {
+        return deskCount;
+    }
+
+    public void setDeskCount(Integer deskCount) {
+        this.deskCount = deskCount;
+    }
+
     public Integer getPeopleCount() {
         return peopleCount;
     }

@@ -11,6 +11,7 @@
     <link type="text/css" rel="stylesheet" href="/web/multi/web-order-settle.css"/>
     <link type="text/css" rel="stylesheet" href="/web/multi/web-order-normal.css"/>
     <script style="text/javascript" src="/web/multi/web-order-settle.js"></script>
+    <script type="text/javascript" src="/web/web-show-time.js"></script>
 </head>
 <body>
 <!--onbeforeunload="return checkRefresh()"-->
@@ -25,7 +26,17 @@
                             <div style="flex: 1">桌号：<b th:text="${order.tableName}"></b></div>
                             <div style="flex: 1">人数：<b th:text="${order.amount}"></b></div>
                         </div>
-                        <div class="food-list">
+
+                        <ul class="nav nav-tabs food-nav-ul" style="margin-top:8px">
+                            <li class="already-nav active" targetCls="food-list">
+                                <a class="dropdown-toggle" href="#">有效菜品 <span class="badge red-badge useful-badge"></span></a>
+                            </li>
+                            <li class="new-append-nav" targetCls="refund-list">
+                                <a class="dropdown-toggle">已退菜品 <span class="badge refund-badge"></span></a>
+                            </li>
+                        </ul>
+
+                        <div class="food-list nav-con-div">
                             <ul class="normal-food-ul">
                                 <li class="header">
                                     <div class="price">品名</div>
@@ -35,22 +46,34 @@
                                 </li>
                                 <!-- 用于存放菜品 -->
                                 <div class="food-list-container">
-                                    <li th:each="food : ${detailList}"  th:attr="foodId=${food.foodId},foodName=${food.foodName},batchNo=${food.batchNo},detailId=${food.id}"><!--  onmouseenter="onOperator(this)"  onmouseleave="finishOperator(this)">-->
+                                    <li data-toggle="tooltip" onClick="refundFood(this)" data-placement="right" title="点击可取消菜品" th:each="food : ${detailList}"  th:attr="foodId=${food.foodId},foodName=${food.foodName},batchNo=${food.batchNo},detailId=${food.id}"><!--  onmouseenter="onOperator(this)"  onmouseleave="finishOperator(this)">-->
                                         <div class="name" th:text="${food.foodName}"></div>
                                         <div class="total"><b th:class="${(food.amount gt 1)?'amount':'food_amount'}" th:text="${food.amount}"></b></div>
                                         <div class="price">￥<span th:text="${food.price}"></span></div>
-                                        <div class="money">￥<b th:text="${food.price*food.amount}"></b></div>
-                                        <div class="operator-div" style="display: none">
-                                            <div><button data-toggle="tooltip" data-placement="bottom" title="打印此菜" class="btn btn-default fa fa-cube" onClick="onClickOperator(this, 'cur')"></button></div>
-                                            <div><button data-toggle="tooltip" data-placement="bottom" title="打印本批" class="btn btn-default fa fa-cubes" onClick="onClickOperator(this, 'batch')"></button></div>
-                                            <div><button data-toggle="tooltip" data-placement="bottom" title="取消此菜" class="btn btn-danger" onClick="onClickOperator(this, \'dddd\')">删</button></div>
-                                        </div>
+                                        <div class="money">￥<b th:text="${#numbers.formatDecimal(food.price*food.amount,1,'COMMA',2,'POINT')}"></b></div>
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
+
+                        <div class="refund-list nav-con-div" style="display: none;">
+                            <ul class="normal-food-ul">
+                                <li class="header">
+                                    <div class="price">品名</div>
+                                    <div class="total">数量</div>
+                                </li>
+                                <!-- 用于存放菜品 -->
+                                <div class="refund-list-container">
+                                    <li th:each="food : ${refundList}">
+                                        <div class="name" th:text="${food.foodName}"></div>
+                                        <div class="total"><b th:class="${(food.amount gt 1)?'amount':'food_amount'}" th:text="${food.amount}"></b></div>
                                     </li>
                                 </div>
                             </ul>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7" style="padding-left: 10px">
                     <div class="content-main">
                         <input th:value="${order.no}" name="orderNo" type="hidden"/>
@@ -81,8 +104,26 @@
                             </div>
                             </div>
 
+                            <div class="form-group">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">用餐时间：</span>
+                                    <span class="form-control" th:text="${order.createTime}"></span>
+                                    <span class="input-group-addon">~</span>
+                                    <span class="form-control" th:text="${order.endTime}"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">用餐时长：</span>
+                                    <span class="form-control show-seconds-now" th:if="${order.status eq '0'}" th:text="${order.createLong}"></span>
+                                    <span class="form-control show-seconds" th:if="${order.status ne '0'}" th:text="${order.endLong - order.createLong}"></span>
+                                </div>
+                            </div>
+
                             <div class="form-group" style="text-align:right">
                                 <p>所需支付金额：￥ <b class="total-money2" style="font-size: 40px; padding-right: 10px; color:#F00;"></b>元</p>
+                                <button class="btn btn-info btn-lg " onclick="printOrder()">打印结算单</button>
                                 <button class="btn btn-primary btn-lg " onclick="submitMoney()">确定结账</button>
                             </div>
                         </div>

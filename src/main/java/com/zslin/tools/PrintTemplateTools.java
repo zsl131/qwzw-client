@@ -2,6 +2,8 @@ package com.zslin.tools;
 
 import com.zslin.basic.tools.ConfigTools;
 import com.zslin.basic.tools.NormalTools;
+import com.zslin.qwzw.dto.FoodDataDto;
+import com.zslin.qwzw.tools.FoodDataTools;
 import org.docx4j.jaxb.Context;
 import org.docx4j.model.properties.table.tr.TrHeight;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -11,7 +13,6 @@ import org.docx4j.wml.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.math.BigInteger;
@@ -28,6 +29,9 @@ public class PrintTemplateTools {
 
     @Autowired
     private ConfigTools configTools;
+
+    @Autowired
+    private FoodDataTools foodDataTools;
 
     public File getTemplateFile(String fileName) {
 //            File f = ResourceUtils.getFile("classpath:word-temp/"+fileName);
@@ -47,10 +51,96 @@ public class PrintTemplateTools {
 
     /** 结算单 */
     private File getSettleTemplate() {
-        return getTemplateFile("settle-template.docx");
+        return getTemplateFile("settle-template-80.docx");
     }
 
-    public File buildFoodFile(String shopName, String pos, String deskName, Integer peopleCount, String orderNo,
+    public File buildSettleFile(FoodDataDto fdd) {
+        File targetFile = new File(configTools.getUploadPath("tickets/")+"settle-"+(UUID.randomUUID().toString())+".docx");
+        try {
+            File f = getSettleTemplate();
+            // 载入模板文件
+            WordprocessingMLPackage wPackage = WordprocessingMLPackage.load(f);
+            // 提取正文
+            MainDocumentPart mainDocumentPart = wPackage.getMainDocumentPart();
+            ObjectFactory factory = Context.getWmlObjectFactory();
+            HashMap<String, String> datas = new HashMap<>();
+            datas.put("shopName", fdd.getShopName());
+            datas.put("deskName", fdd.getDeskName());
+            datas.put("peopleCount", fdd.getPeopleCount()+"");
+            datas.put("orderNo", fdd.getOrderNo());
+            datas.put("date", NormalTools.curDate());
+            mainDocumentPart.variableReplace(datas);
+
+            createNormalTable(wPackage, mainDocumentPart, factory, fdd);
+            createParagraph(mainDocumentPart, factory, "", JcEnumeration.RIGHT);
+
+            createParagraph(mainDocumentPart, factory, "合计："+fdd.getTotalMoney()+" 元", JcEnumeration.RIGHT, "000000", "28",
+                    true, true, false, false);
+
+            createParagraph(mainDocumentPart, factory, "吾悦广场5楼", JcEnumeration.CENTER);
+            createParagraph(mainDocumentPart, factory, "0870-2399488", JcEnumeration.CENTER, "000000", "20",
+                    true, false, false, false);
+
+//            byte[] barcode = qrGenerateTools.getBarcode(orderNo);
+//            ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");
+            wPackage.save(targetFile);
+        } catch (Docx4JException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return targetFile;
+    }
+
+    public File buildFoodFile(FoodDataDto fdd) {
+        File targetFile = new File(configTools.getUploadPath("tickets/")+"food-"+(UUID.randomUUID().toString())+".docx");
+        try {
+            File f = getFoodTemplate();
+            // 载入模板文件
+            WordprocessingMLPackage wPackage = WordprocessingMLPackage.load(f);
+            // 提取正文
+            MainDocumentPart mainDocumentPart = wPackage.getMainDocumentPart();
+            ObjectFactory factory = Context.getWmlObjectFactory();
+            HashMap<String, String> datas = new HashMap<>();
+            datas.put("shopName", fdd.getShopName());
+            datas.put("pos", FoodDataTools.buildPos(fdd.getPos())); //位置
+            datas.put("deskName", fdd.getDeskName());
+            datas.put("peopleCount", fdd.getPeopleCount()+"");
+            datas.put("orderNo", fdd.getOrderNo());
+            datas.put("batchNo", fdd.getBatchNo());
+            datas.put("date", NormalTools.curDate());
+            mainDocumentPart.variableReplace(datas);
+
+            createNormalTable(wPackage, mainDocumentPart, factory, fdd);
+            createParagraph(mainDocumentPart, factory, "", JcEnumeration.RIGHT);
+
+            if(!"1".equals(fdd.getIsFirst())) {
+                createParagraph(mainDocumentPart, factory, "注意：非首次打印", JcEnumeration.CENTER, "000000", "24",
+                        true, true, false, false);
+            }
+
+            if(fdd.getPos().equals(FoodDataDto.POS_CASH)) {
+                createParagraph(mainDocumentPart, factory, "吾悦广场5楼", JcEnumeration.CENTER);
+                createParagraph(mainDocumentPart, factory, "0870-2399488", JcEnumeration.CENTER, "000000", "20",
+                     true, false, false, false);
+            }
+
+//            byte[] barcode = qrGenerateTools.getBarcode(orderNo);
+//            ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");
+            wPackage.save(targetFile);
+        } catch (Docx4JException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return targetFile;
+    }
+
+    /*public File buildFoodFile(String shopName, String pos, String deskName, Integer peopleCount, String orderNo,
                               String batchNo, String details) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"food-"+(UUID.randomUUID().toString())+".docx");
         try {
@@ -71,11 +161,12 @@ public class PrintTemplateTools {
             datas.put("details", details);
             mainDocumentPart.variableReplace(datas);
 
-            createNormalTable(wPackage, mainDocumentPart, factory);
+            FoodDataDto fdd = foodDataTools.buildData2Cook(orderNo, batchNo);
+            createNormalTable(wPackage, mainDocumentPart, factory, fdd);
             createParagraph(mainDocumentPart, factory, "", JcEnumeration.RIGHT);
-            createParagraph(mainDocumentPart, factory, "吾悦广场5楼", JcEnumeration.CENTER);
-            createParagraph(mainDocumentPart, factory, "0870-2399488", JcEnumeration.CENTER, "000000", "20",
-                    true, false, false, false);
+            //createParagraph(mainDocumentPart, factory, "吾悦广场5楼", JcEnumeration.CENTER);
+            //createParagraph(mainDocumentPart, factory, "0870-2399488", JcEnumeration.CENTER, "000000", "20",
+               //     true, false, false, false);
 
 //            byte[] barcode = qrGenerateTools.getBarcode(orderNo);
 //            ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");
@@ -88,10 +179,10 @@ public class PrintTemplateTools {
             e.printStackTrace();
         }
         return targetFile;
-    }
+    }*/
 
     private void createNormalTable(WordprocessingMLPackage wordMLPackage,
-                                   MainDocumentPart t, ObjectFactory factory) throws Exception {
+                                   MainDocumentPart t, ObjectFactory factory, FoodDataDto foodDataDto) throws Exception {
         RPr titleRpr = getRPr(factory, "宋体", "000000", "22", STHint.EAST_ASIA,
                 true, false, false, false);
         RPr contentRpr = getRPr(factory, "宋体", "000000", "22",
@@ -111,22 +202,37 @@ public class PrintTemplateTools {
 
         addBorders(table, topBorder, topBorder, leftBorder, leftBorder, hBorder, null);
 
-        double[] colWidthPercent = new double[] { 30, 20, 20, 30 };// 百分比
+//        double[] colWidthPercent = new double[] { 30, 20, 20, 30 };// 百分比
+        double[] colWidthPercent = foodDataDto.getColWidths();// 百分比
         setTableGridCol(wordMLPackage, factory, table, 100, colWidthPercent);
 
         Tr titleRow = factory.createTr();
         setTableTrHeight(factory, titleRow, "500");
-        addTableCell(factory, wordMLPackage, titleRow, "姓甚", titleRpr,
-                JcEnumeration.CENTER, true, "C6D9F1");
-        addTableCell(factory, wordMLPackage, titleRow, "名谁", titleRpr,
+
+        for(String name : foodDataDto.getColNames()) {
+            addTableCell(factory, wordMLPackage, titleRow, name, titleRpr,
+                    JcEnumeration.CENTER, true, "C6D9F1");
+        }
+        table.getContent().add(titleRow);
+
+        /*addTableCell(factory, wordMLPackage, titleRow, "名谁", titleRpr,
                 JcEnumeration.CENTER, true, "C6D9F1");
         addTableCell(factory, wordMLPackage, titleRow, "籍贯", titleRpr,
                 JcEnumeration.CENTER, true, "C6D9F1");
         addTableCell(factory, wordMLPackage, titleRow, "营生", titleRpr,
                 JcEnumeration.CENTER, true, "C6D9F1");
-        table.getContent().add(titleRow);
+        table.getContent().add(titleRow);*/
 
-        for (int i = 0; i < 5; i++) {
+        for(String data : foodDataDto.getData()) {
+            Tr contentRow = factory.createTr();
+            List<String> contents = getContents(data);
+            for(String con : contents) {
+                addTableCell(factory, wordMLPackage, contentRow, con, contentRpr,
+                        JcEnumeration.CENTER, false, null);
+            }
+            table.getContent().add(contentRow);
+        }
+        /*for (int i = 0; i < 5; i++) {
             Tr contentRow = factory.createTr();
             addTableCell(factory, wordMLPackage, contentRow, "无名氏", contentRpr,
                     JcEnumeration.CENTER, false, null);
@@ -137,9 +243,20 @@ public class PrintTemplateTools {
             addTableCell(factory, wordMLPackage, contentRow, "吟诗赋曲",
                     contentRpr, JcEnumeration.CENTER, false, null);
             table.getContent().add(contentRow);
-        }
+        }*/
         setTableAlign(factory, table, JcEnumeration.CENTER);
         t.addObject(table);
+    }
+
+    private List<String> getContents(String con) {
+        String [] array = con.split(FoodDataDto.DATA_SEP);
+        List<String> res = new ArrayList<>();
+        for(String c : array) {
+            if(c!=null && !"".equals(c.trim())) {
+                res.add(c);
+            }
+        }
+        return res;
     }
 
     /**

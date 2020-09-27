@@ -5,14 +5,13 @@ import lombok.Data;
 import javax.persistence.*;
 
 /**
- * 订单详情
- *  - 菜品详情
- *  - 每一样菜品一开始不能合并，否则会导致打印出问题
+ * 已退菜品
+ *  - 把已退菜品单独列出来
  */
 @Entity
-@Table(name = "t_food_order_detail")
+@Table(name = "t_refund_order_food")
 @Data
-public class FoodOrderDetail {
+public class RefundOrderFood {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,9 +45,9 @@ public class FoodOrderDetail {
 
     /** 打印次数 */
     @Column(name = "print_count")
-     private Integer printCount = 0;
+    private Integer printCount = 0;
 
-   @Column(name = "cate_id")
+    @Column(name = "cate_id")
     private Integer cateId;
 
     @Column(name = "cate_name")
