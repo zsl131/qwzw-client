@@ -85,7 +85,7 @@ public class WebNewOrdersController {
 
         MyTimeDto mtd = new MyTimeDto(day);
 
-        Integer deskCount = foodOrderService.deskCount(day); //人数
+        //Integer deskCount = foodOrderService.deskCount(day); //人数
         Integer peopleCount = foodOrderService.peopleCount(day); //桌数
 
         Integer dotCount = foodOrderService.dotCount(day); //抹零数量
@@ -93,14 +93,21 @@ public class WebNewOrdersController {
 
         List<FoodOrderDetail> detailList = foodOrderDetailService.findByCreateDay(day, SimpleSortBuilder.generateSort("foodId"));
         detailList = FoodDataTools.rebuildFoodDetail(detailList);
+        Integer deskCount = foodOrderService.deskCount(day, "-1");
 
-        model.addAttribute("deskCount", deskCount);
-        model.addAttribute("deskCount", foodOrderService.deskCount(day, "-1")); //关闭桌数
-        model.addAttribute("peopleCount", peopleCount);
-        model.addAttribute("dotCount", dotCount);
-        model.addAttribute("dotMoney", dotMoney);
-        model.addAttribute("unEndCount", foodOrderService.unEndCount(day)); //未结束数量
-        model.addAttribute("totalMoney", foodOrderService.totalMoney(day)); //总金额，含抹零金额
+        Float discountMoney = foodOrderService.discountMoney(day); //抵扣金额
+
+        model.addAttribute("deskCount", deskCount==null?0:deskCount);
+        model.addAttribute("deskCount", deskCount==null?0:deskCount); //关闭桌数
+        model.addAttribute("peopleCount", peopleCount==null?0:peopleCount);
+        model.addAttribute("dotCount", dotCount==null?0:dotCount);
+        model.addAttribute("dotMoney", dotMoney==null?0:dotMoney);
+        Integer unEndCount = foodOrderService.unEndCount(day);
+        model.addAttribute("unEndCount", unEndCount==null?0:unEndCount); //未结束数量
+        model.addAttribute("discountMoney", discountMoney==null?0:discountMoney); //抵扣金额
+
+        Float totalMoney = foodOrderService.totalMoney(day);
+        model.addAttribute("totalMoney", totalMoney==null?0:totalMoney); //总金额，含抹零金额
 
         Float wxMoney = foodOrderService.payMoney(day, "2");
         Float alipayMoney = foodOrderService.payMoney(day, "3");
@@ -111,6 +118,7 @@ public class WebNewOrdersController {
 
         List<RefundOrderFood> refundList = refundOrderFoodService.findByCreateDay(day);
         model.addAttribute("refundList", refundList);
+        model.addAttribute("day", day);
 
         model.addAttribute("income", incomeService.findByComeDay(day.replaceAll("-", "")));
         return "web/newOrders/cal";

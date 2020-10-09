@@ -86,8 +86,17 @@ function submitMoney() {
             const checked = $("input[name='money-check']").prop("checked");
             const removeDot = checked?"1":"0"; //是否移除小数点
             const totalMoney = parseFloat($(".total-money").html()); //总金额
+            var discountMoney = 0, discountReason = "";
+            $(".mt-coupon-div").find("input").each(function() {
+                discountReason += ($(this).val())+",";
+            });
+            discountMoney = parseFloat($(".mt-coupon-div").find(".mt-worth").html());
+            discountReason = discountReason?discountReason:"";
+            discountMoney = discountMoney?discountMoney:0;
+            console.log(discountReason, discountMoney);
+            //console.log("-----------")
             //console.log(orderNo, payType+"---"+removeDot+"----"+totalMoney);
-            $.post("/web/foodOrder/settlement", {orderNo:orderNo, totalMoney: totalMoney, removeDot: removeDot, payType: payType}, function(res) {
+            $.post("/web/foodOrder/settlement", {orderNo:orderNo, discountType:"6", discountReason: discountReason, discountMoney:discountMoney, totalMoney: totalMoney, removeDot: removeDot, payType: payType}, function(res) {
                 if("-1"==res) {
                     showDialog("订单不存在或不在就餐中", "系统提示");
                     setTimeout(function() {window.location.reload();}, 2500);
@@ -112,6 +121,7 @@ function setTotalMoney() {
     })
     money = money.toFixed(2); //保留两位小数
     $(".total-money").html(money);
+    $(".total-money2").attr("oriMoney", money);
     $(".total-money2").html(money);
     changeCheck(); //检测是否要抹零
 }
@@ -139,11 +149,16 @@ function finishOperator(obj) {
 function changeCheck() {
 //    const checked = $(obj).prop("checked");
     const checked = $("input[name='money-check']").prop("checked");
-    const totalMoney = parseFloat($(".total-money").html());
+//    const totalMoney = parseFloat($(".total-money").html());
+    var totalMoney = parseFloat($(".total-money2").attr("oriMoney")); //原始份额
+    var discountMoney = parseFloat($(".mt-worth").html()); //优惠金额
+    discountMoney = discountMoney?discountMoney:0;
+    console.log(discountMoney)
+    var money = totalMoney - discountMoney;
     if(checked) {
-        $(".total-money2").html(parseInt(totalMoney));
+        $(".total-money2").html(parseInt(money));
     } else {
-        $(".total-money2").html(totalMoney);
+        $(".total-money2").html(money);
     }
 }
 

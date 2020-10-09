@@ -63,6 +63,9 @@ public class FoodOrderDetail {
     @Column(name = "food_id")
     private Integer foodId;
 
+    @Column(name = "food_data_id")
+    private Integer foodDataId;
+
     /** 单次下单的单品数量 */
     private Integer amount;
 

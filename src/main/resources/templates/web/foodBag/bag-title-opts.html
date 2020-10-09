@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="content">
+            <div class="title">
+                <b><i class="fa fa-desktop"></i> 套餐管理（<i th:if="${bagList ne null}" th:text="${#lists.size(bagList)}" style="color:#F60;"></i>）</b>
+                <a href="/web/foodBag/index"><i class="fa fa-list-ul"></i> 套餐列表</a>
+                <a href="/web/foodBag/add"><i class="fa fa-plus"></i> 添加套餐</a>
+            </div>
+        </div>
+    </body>
+</html>

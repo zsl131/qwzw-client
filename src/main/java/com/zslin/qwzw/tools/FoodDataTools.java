@@ -72,7 +72,7 @@ public class FoodDataTools {
         if(pc!=null) { //如果打印配置不为空
             List<FoodOrderDetail> cookData = buildData(detailList, "2"); //厨房菜单
             if(cookData!=null && cookData.size()>0) {
-                FoodDataDto cookDto = buildBaseDto(order, batchNo, isFirst, company);
+                /*FoodDataDto cookDto = buildBaseDto(order, batchNo, isFirst, company);
                 cookDto.setColWidths(75, 25);
                 cookDto.setColNames("菜品", "数量");
                 cookDto.setData(buildData2Cook(cookData));
@@ -80,7 +80,17 @@ public class FoodDataTools {
 
                 File file = printTemplateTools.buildFoodFile(cookDto);
 
-                print(pc.getPrintName2(), file);
+                print(pc.getPrintName2(), file);*/
+
+                if(cookData!=null && cookData.size()>0) {
+                    FoodDataDto cookDto = buildBaseDto(order, batchNo, isFirst, company);
+                   // System.out.println(cookData);
+                    List<String> names = buildData2Cook(cookData);
+                    for(String name : names) {
+                        File file = printTemplateTools.buildCookFile(cookDto.getDeskName(), name);
+                        print(pc.getPrintName2(), file);
+                    }
+                }
             }
 
             List<FoodOrderDetail> cashData = buildData(detailList, "1"); //吧台菜单
@@ -109,6 +119,30 @@ public class FoodDataTools {
                 print(pc.getPrintName3(), file);
             }
         }
+    }
+
+    /** 打印订单 */
+    public void printOrder(String orderNo) {
+        List<FoodOrderDetail> detailList = foodOrderDetailService.findByOrderNo(orderNo, SimpleSortBuilder.generateSort("id"));
+        detailList = rebuildFoodDetail(detailList);
+        FoodOrder order = foodOrderService.findByNo(orderNo);
+        Company company = companyTools.getCompany();
+
+        PrintConfig pc = printConfigTools.getConfig();
+
+        FoodDataDto dto = buildBaseDto(order, "", "", company);
+        dto.setColWidths(65, 20, 15);
+        dto.setColNames("菜品", "数量", "小计");
+        dto.setData(buildData2Cash(detailList));
+        dto.setTotalMoney(buildMoney(detailList));
+        dto.setPos(FoodDataDto.POS_CASH);
+        dto.setTotalMoney(order.getTotalMoney2());
+
+        System.out.println(dto);
+
+        File file = printTemplateTools.buildOrderFile(dto);
+
+        print(pc.getPrintName1(), file);
     }
 
     public void printFood(String orderNo, String batchNo) {

@@ -12,7 +12,7 @@ import java.util.List;
 public class FoodDataDto {
 
     /** 数据分隔符 */
-    public static final String DATA_SEP = ",";
+    public static final String DATA_SEP = "： ";
 
     /** 厨房位置 */
     public static final String POS_COOK = "2";

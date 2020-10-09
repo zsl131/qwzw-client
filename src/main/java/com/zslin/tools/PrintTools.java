@@ -17,11 +17,10 @@ public class PrintTools {
      * 打印测试页
      * @param printerName
      */
-    public static void printTest(String printerName) {
+    public static void printTest(String printerName, String path) {
         //E:\idea\2020\qwzw-client\src\main\resources
-        String sep = File.separator;
-        String path = System.getProperty("user.dir") + sep + "src" + sep + "main" + sep +
-                "resources" + sep + "word-temp" + sep + "test-print.docx";
+//        String sep = File.separator;
+//        String path = System.getProperty("user.dir") + sep + "src" + sep + "main" + sep + "resources" + sep + "word-temp" + sep + "test-print.docx";
         print(path, printerName);
     }
 

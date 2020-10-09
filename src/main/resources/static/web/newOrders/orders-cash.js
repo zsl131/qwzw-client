@@ -33,6 +33,7 @@ function rebuildMoney() {
 }
 
 function setResultMoney(money) {
+    money = money.toFixed(2); //保留两位小数
     $("#calTotalMoney").html(money + " 元");
 }
 

@@ -84,7 +84,7 @@ public class WebFoodOrderController {
     }
 
     @PostMapping(value = "settlement")
-    public @ResponseBody String settlement(String orderNo, Float totalMoney, String removeDot, String payType) {
+    public @ResponseBody String settlement(String orderNo, String discountType, String discountReason, Float discountMoney, Float totalMoney, String removeDot, String payType) {
         FoodOrder order = foodOrderService.findByNo(orderNo);
         float  orderMoney = buildTotalMoney(orderNo);
         if(order==null || !"0".equals(order.getStatus())) {return "-1";} //订单不存在或不在就餐中
@@ -102,9 +102,14 @@ public class WebFoodOrderController {
         order.setPayType(payType);
         order.setEndTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
         order.setEndLong(System.currentTimeMillis());
+        order.setDiscountMoney(discountMoney);
+        order.setDiscountReason(discountReason);
+        order.setDiscountType(discountType);
         order.setStatus("1");
         foodOrderService.save(order);
         //TODO 收银完成需要打印消费单
+
+        foodDataTools.printOrder(orderNo);
         return "1";
     }
 
@@ -197,6 +202,7 @@ public class WebFoodOrderController {
                 fod.setCreateLong(System.currentTimeMillis());
                 fod.setCreateTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
                 fod.setFoodId(food.getId());
+                fod.setFoodDataId(food.getDataId());
                 fod.setFoodName(food.getName());
                 fod.setFoodNameLetter(food.getNameLetter());
                 fod.setOrderId(order.getId());

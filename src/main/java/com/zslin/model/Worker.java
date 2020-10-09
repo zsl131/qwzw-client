@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 /**
  * Created by 钟述林 393156105@qq.com on 2017/3/10 10:00.
+ *
  * 只放收银人员的信息
  */
 @Entity

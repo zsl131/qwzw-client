@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+	  xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="fragments/webNewModel">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<script type="text/javascript" src="/basic/validate/bootstrapValidator.js"></script>
+		<script type="text/javascript" src="/web/qwzw/bag.js"></script>
+		<link type="text/css" rel="stylesheet" href="/web/qwzw/bag.css"/>
+		<title>套餐配置</title>
+		<style>
+			.single-level {
+				float:left; margin-right:5px; border:1px #ddd solid; font-weight:normal; padding:0px 8px; border-radius:5px; background:#FaFAFA;
+			}
+		</style>
+	</head>
+	<body>
+		<div th:fragment="content" th:remove="tag">
+			<div class="container">
+				<div th:replace="web/foodBag/bag-title-opts :: content" th:remove="tag"></div>
+				<div class="row" style="background:#FFF;margin-top: 12px;">
+					<div class="col-md-3" style="padding:10px; text-align:left;">
+						<h4 style="text-align:center;">配置套餐内容</h4>
+						<p>套餐名称：<b th:text="${bag.name}"></b></p>
+						<p>备注：<b th:text="${bag.remark}"></b></p>
+					</div>
+					<div class="col-md-9" style="padding:10px; border-left: 1px #e0e0e0 solid;">
+						<div class="foot-list-main">
+							<div class="category-main">
+								<ul>
+									<li th:each="cate: ${categoryList}" th:text="${cate.name}"
+										th:attr="cateId=${cate.dataId}, cateName=${cate.name}"
+										 onclick="onSetDetail(this)"></li>
+								</ul>
+							</div>
+							<div class="food-list-con">
+								<!--<div th:each="food: ${foodList}"
+									 th:attr="foodId=${food.id},cateId=${food.cateId}, cateName=${food.cateName},foodName=${food.name}"
+									 class="single-food" onclick="onSetDetail(this)">-->
+								<div th:each="food: ${foodList}"
+									 th:attr="foodId=${food.id},cateId=${food.cateId}, cateName=${food.cateName},foodName=${food.name}"
+									 class="single-food">
+									<img th:src="${food.picPath}"/>
+									<p class="name" th:text="${food.name}"></p>
+									<p class="price">￥ <b th:text="${food.price}"></b> / <span th:text="${food.unitName}">份</span></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</body>
+</html>

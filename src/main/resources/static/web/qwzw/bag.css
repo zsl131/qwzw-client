@@ -1,0 +1,24 @@
+.foot-list-main {
+    display: flex;
+}
+.category-main {
+    width: 150px;
+}
+.category-main ul {padding:0px; background:#f7f7f7;border:1px #e0e0e0 solid; border-width: 1px 1px 0px 1px;}
+.category-main ul li {
+    list-style:none; text-align:center; height: 40px; line-height: 40px; border-bottom:1px #e0e0e0 solid; cursor:pointer;
+}
+.food-list-con {
+    flex: 1; display: block-inline;
+}
+.single-food {
+    width: 120px; float:left; border:1px #e0e0e0 solid; margin: 5px;
+}
+.single-food img {
+    width:120px; height: 100px;
+}
+.single-food .name {text-align: center; padding-top: 3px;}
+.single-food .price {text-align: center; }
+.single-food .price b {color:#F20;}
+
+.canClick {cursor: pointer;}

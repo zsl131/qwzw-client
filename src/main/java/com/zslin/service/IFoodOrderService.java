@@ -56,7 +56,7 @@ public interface IFoodOrderService extends BaseRepository<FoodOrder, Integer>, J
     Float dotMoney(String createDay);
 
     /** 未结束的订单数 */
-    @Query("SELECT COUNT(f.id) FROM FoodOrder f WHERE f.createDay=?1 AND f.status='-1'")
+    @Query("SELECT COUNT(f.id) FROM FoodOrder f WHERE f.createDay=?1 AND f.status='0'")
     Integer unEndCount(String createDay);
 
     /** 总金额，含抹零金额 */
@@ -66,4 +66,7 @@ public interface IFoodOrderService extends BaseRepository<FoodOrder, Integer>, J
     /** 不同付款方式的金额 */
     @Query("SELECT SUM(f.totalMoney2) FROM FoodOrder f WHERE f.createDay=?1 AND f.status!='-1' AND f.payType=?2 ")
     Float payMoney(String day, String payType);
+
+    @Query("SELECT SUM(f.discountMoney) FROM FoodOrder f WHERE f.createDay=?1 AND f.status!='-1'")
+    Float discountMoney(String day);
 }

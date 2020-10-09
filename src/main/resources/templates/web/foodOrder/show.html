@@ -121,7 +121,7 @@
                                     <b th:if="${order.status eq '-1'}" style="font-size: 24px; color:#F00;">订单已关闭</b>
                                     <b th:if="${order.status eq '1'}" style="font-size: 24px; color:#00F;">订单已完成</b>
                                 </div>
-                                <div style="flex:1; text-align:right;">实付金额：￥ <b style="font-size: 40px; padding-right: 10px; color:#F00;" th:text="${order.totalMoney2}"></b>元</div>
+                                <div style="flex:1; text-align:right;">实付金额：￥ <b style="font-size: 40px; padding-right: 10px; color:#F00;" th:text="${order.totalMoney2-order.discountMoney}"></b>元</div>
                             </div>
                         </div>
                     </div>

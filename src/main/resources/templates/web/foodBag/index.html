@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/qwzw/bag-index.css"/>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="bag-main">
+            <div th:replace="web/foodBag/bag-title-opts :: content" th:remove="tag"></div>
+
+            <div class="bag-list-div">
+                <div th:each="bag: ${bagList}" class="single-bag">
+                    <p class="name"><a th:href="|/web/foodBag/onAddDetail?bagId=${bag.id}|" th:text="${bag.name}"></a></p>
+                    <p class="remark" th:text="${bag.remark}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

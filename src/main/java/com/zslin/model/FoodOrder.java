@@ -54,6 +54,9 @@ public class FoodOrder {
     @Column(name = "end_long")
     private Long endLong;
 
+    /** 订单类型；1-普通订单；2-美团订单 */
+    private String type;
+
     /** 优惠金额 */
     @Column(name = "discount_money")
     private Float discountMoney=0f;

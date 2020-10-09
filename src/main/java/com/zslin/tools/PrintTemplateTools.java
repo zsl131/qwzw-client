@@ -43,6 +43,13 @@ public class PrintTemplateTools {
     private File getFoodTemplate() {
         return getTemplateFile("food-template.docx");
     }
+    private File getCookTemplate() {
+        return getTemplateFile("cook-template.docx");
+    }
+
+    private File getOrderTemplate() {
+        return getTemplateFile("pay-template-80.docx");
+    }
 
     /** 预结单 */
     private File getPreSettleTemplate() {
@@ -94,6 +101,30 @@ public class PrintTemplateTools {
         return targetFile;
     }
 
+    public File buildCookFile(String deskName, String foodName) {
+        File targetFile = new File(configTools.getUploadPath("tickets/")+"food-"+(UUID.randomUUID().toString())+".docx");
+        try {
+            File f = getCookTemplate();
+            // 载入模板文件
+            WordprocessingMLPackage wPackage = WordprocessingMLPackage.load(f);
+            // 提取正文
+            MainDocumentPart mainDocumentPart = wPackage.getMainDocumentPart();
+            ObjectFactory factory = Context.getWmlObjectFactory();
+            HashMap<String, String> datas = new HashMap<>();
+            datas.put("deskName", deskName);
+            datas.put("foodName", foodName);
+            datas.put("date", NormalTools.curDate());
+            mainDocumentPart.variableReplace(datas);
+
+            wPackage.save(targetFile);
+        } catch (Docx4JException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return targetFile;
+    }
+
     public File buildFoodFile(FoodDataDto fdd) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"food-"+(UUID.randomUUID().toString())+".docx");
         try {
@@ -126,6 +157,48 @@ public class PrintTemplateTools {
                 createParagraph(mainDocumentPart, factory, "0870-2399488", JcEnumeration.CENTER, "000000", "20",
                      true, false, false, false);
             }
+
+//            byte[] barcode = qrGenerateTools.getBarcode(orderNo);
+//            ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");
+            wPackage.save(targetFile);
+        } catch (Docx4JException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return targetFile;
+    }
+
+    public File buildOrderFile(FoodDataDto fdd) {
+        File targetFile = new File(configTools.getUploadPath("tickets/")+"order-"+(UUID.randomUUID().toString())+".docx");
+        try {
+            File f = getOrderTemplate();
+            // 载入模板文件
+            WordprocessingMLPackage wPackage = WordprocessingMLPackage.load(f);
+            // 提取正文
+            MainDocumentPart mainDocumentPart = wPackage.getMainDocumentPart();
+            ObjectFactory factory = Context.getWmlObjectFactory();
+            HashMap<String, String> datas = new HashMap<>();
+            datas.put("shopName", fdd.getShopName());
+            datas.put("pos", FoodDataTools.buildPos(fdd.getPos())); //位置
+            datas.put("deskName", fdd.getDeskName());
+            datas.put("peopleCount", fdd.getPeopleCount()+"");
+            datas.put("orderNo", fdd.getOrderNo());
+            datas.put("batchNo", fdd.getBatchNo());
+            datas.put("date", NormalTools.curDate());
+            mainDocumentPart.variableReplace(datas);
+
+            createNormalTable(wPackage, mainDocumentPart, factory, fdd);
+            createParagraph(mainDocumentPart, factory, "", JcEnumeration.RIGHT);
+
+            createParagraph(mainDocumentPart, factory, "合计："+fdd.getTotalMoney()+" 元", JcEnumeration.RIGHT, "000000", "28",
+                    true, true, false, false);
+
+            createParagraph(mainDocumentPart, factory, "吾悦广场5楼", JcEnumeration.CENTER);
+            createParagraph(mainDocumentPart, factory, "0870-2399488", JcEnumeration.CENTER, "000000", "20",
+                    true, false, false, false);
 
 //            byte[] barcode = qrGenerateTools.getBarcode(orderNo);
 //            ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");

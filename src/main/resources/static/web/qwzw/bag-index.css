@@ -1,0 +1,15 @@
+.bag-main {
+    background:#FFF; padding-top: 12px; border-radius: 7px;
+}
+.bag-list-div {
+    display: inline-block; width:100%
+}
+.single-bag {
+    border:1px #E8E8E8 solid; width: 130px; float:left; margin: 10px 6px; padding: 5px; border-radius: 5px; background:#FaFAFA; cursor: pointer;
+}
+.single-bag .name {
+    font-weight: bold;
+}
+.single-bag .remark {
+    color:#999; font-size: 12px;
+}
