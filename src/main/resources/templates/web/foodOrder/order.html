@@ -15,6 +15,7 @@
     <link type="text/css" rel="stylesheet" href="/web/multi/web-food.css"/>
     <script type="text/javascript" src="/web/multi/web-food.js"></script>
     <script type="text/javascript" src="/web/multi/web-foodOrder.js"></script>
+    <script type="text/javascript" src="/web/multi/web-foodBag.js"></script>
     <link type="text/css" rel="stylesheet" href="/web/multi/web-order-menu.css"/>
     <link type="text/css" rel="stylesheet" href="/web/multi/web-order-normal.css"/>
 </head>
@@ -56,6 +57,11 @@
 
                             <div class="food-list-div">
                                 <ul class="food-list-ul">
+                                    <li th:each="bag : ${bagList}" onclick="showFoodBag(this)" th:attr="bagId=${bag.id}" foodName="套餐" sn="taocan" nameLetter="TC">
+                                        <img src="/web/bag.jpg"/>
+                                        <p class="name" th:text="${bag.name}"></p>
+                                        <p class="price" th:text="${bag.remark}"></p>
+                                    </li>
                                     <li th:each="food : ${foodList}" onclick="addBasket(this)" th:attr="foodId=${food.id}, price=${food.price}, cateId=${food.cateId}, foodName=${food.name}, sn=${food.sn},nameLetter=${food.nameLetter}">
                                         <img th:src="${food.picPath}"/>
                                         <p class="name" th:text="${food.name}"></p>

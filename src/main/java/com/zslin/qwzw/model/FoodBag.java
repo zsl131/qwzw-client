@@ -21,4 +21,7 @@ public class FoodBag {
     private String sn;
 
     private String remark;
+
+    /** 是否启用 */
+    private String status= "1";
 }

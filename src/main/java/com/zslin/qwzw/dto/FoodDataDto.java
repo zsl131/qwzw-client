@@ -53,6 +53,9 @@ public class FoodDataDto {
     /** 合计金额 */
     private Float totalMoney;
 
+    /** 抵扣金额 */
+    private Float discountMoney = 0f;
+
     public static FoodDataDto getInstance() {return new FoodDataDto();}
 //    public static FoodDataDto getInstance(int length) {return new FoodDataDto(length);}
 

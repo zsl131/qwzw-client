@@ -63,6 +63,7 @@
                             <span th:case="6">美团抵价（<b th:text="${obj.discountMoney}"></b> 元）</span>
                             <span th:case="9">飞凡抵价（<b th:text="${obj.discountMoney}"></b> 元）</span>
                             <span th:case="10">时段折扣（<b th:text="${obj.discountMoney}"></b> 元）</span>
+                            <span th:case="13">套餐抵扣（<b th:text="${obj.discountMoney}"></b> 元）</span>
                             <span th:case="*">-</span>
                         </td>
                         <td th:switch="${obj.status}">

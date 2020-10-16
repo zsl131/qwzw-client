@@ -12,6 +12,7 @@ import com.zslin.qwzw.service.IFoodBagDetailService;
 import com.zslin.qwzw.service.IFoodBagService;
 import com.zslin.service.ICategoryService;
 import com.zslin.service.IFoodService;
+import com.zslin.web.dto.FoodBagDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -72,14 +74,18 @@ public class FoodBagController {
         List<Category> categoryList = categoryService.findAll(sort);
         List<Food> foodList = foodService.findAll(sort);
 
+        List<FoodBagDetail> detailList = foodBagDetailService.findByBagId(bagId);
+
         model.addAttribute("foodList", foodList);
+        model.addAttribute("detailList", detailList);
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("bag", bag);
         return "web/foodBag/onAddDetail";
     }
 
     @PostMapping(value = "onAddDetail")
-    public @ResponseBody String onAddDetail(Integer bagId, String bagName, String ids, String names, Integer amount) {
+    public @ResponseBody String onAddDetail(Integer bagId, String bagName, String ids, Integer totalCount,
+                                            String names, Integer amount, Integer cateId, String cateName) {
 //        FoodBag bag = foodBagService.findOne(bagId);
         FoodBagDetail fbd = new FoodBagDetail();
         fbd.setAmount(amount);
@@ -87,7 +93,17 @@ public class FoodBagController {
         fbd.setBagName(bagName);
         fbd.setFoodIds(ids);
         fbd.setFoodNames(names);
+        fbd.setTotalCount(totalCount);
+        fbd.setCategoryId(cateId);
+        fbd.setCategoryName(cateName);
         foodBagDetailService.save(fbd);
+        return "1";
+    }
+
+    /** 修改状态 */
+    @PostMapping(value = "updateStatus")
+    public @ResponseBody String updateStatus(Integer id, String status) {
+        foodBagService.updateStatus(id, status);
         return "1";
     }
 
@@ -96,5 +112,46 @@ public class FoodBagController {
     public @ResponseBody String deleteDetail(Integer detailId) {
         foodBagDetailService.delete(detailId);
         return "1";
+    }
+
+    /** 获取所有可使用的套餐 */
+    @PostMapping(value = "findAll")
+    public @ResponseBody List<FoodBag> findAll() {
+        List<FoodBag> bagList = foodBagService.findByStatus("1");
+        return bagList;
+    }
+
+    @PostMapping(value = "loadOne")
+    public @ResponseBody
+    FoodBagDto loadOne(Integer id) {
+        FoodBag bag = foodBagService.findOne(id);
+        List<FoodBagDetail> detailList = foodBagDetailService.findByBagId(id);
+        return new FoodBagDto(bag, detailList, foodService.findByIds(buildFoodIds(detailList)));
+    }
+
+    private Integer [] buildFoodIds(List<FoodBagDetail> detailList) {
+        List<Integer> ids = new ArrayList<>();
+        for(FoodBagDetail fbd:detailList) {
+            ids.addAll(buildIds(fbd.getFoodIds()));
+        }
+        List<Integer> res = new ArrayList<>();
+        for(Integer id : ids) {
+            if(!res.contains(id)) {res.add(id);}
+        }
+
+        return res.toArray(new Integer[res.size()]);
+    }
+
+    private List<Integer> buildIds(String ids) {
+        List<Integer> res = new ArrayList<>();
+        String [] array = ids.split("-");
+        for(String str : array) {
+            try {
+                Integer id = Integer.parseInt(str);
+                if(!res.contains(id)) {res.add(id);} ;
+            } catch (Exception e) {
+            }
+        }
+        return res;
     }
 }

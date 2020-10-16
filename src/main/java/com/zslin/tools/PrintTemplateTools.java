@@ -81,7 +81,13 @@ public class PrintTemplateTools {
             createNormalTable(wPackage, mainDocumentPart, factory, fdd);
             createParagraph(mainDocumentPart, factory, "", JcEnumeration.RIGHT);
 
-            createParagraph(mainDocumentPart, factory, "合计："+fdd.getTotalMoney()+" 元", JcEnumeration.RIGHT, "000000", "28",
+            Float discountMoney = fdd.getDiscountMoney();
+            if(discountMoney!=null && discountMoney>0) {
+                createParagraph(mainDocumentPart, factory, "抵扣："+discountMoney+" 元", JcEnumeration.RIGHT, "000000", "22",
+                        true, true, false, false);
+            }
+
+            createParagraph(mainDocumentPart, factory, "需支付："+(fdd.getTotalMoney()-(discountMoney==null?0:discountMoney))+" 元", JcEnumeration.RIGHT, "000000", "28",
                     true, true, false, false);
 
             createParagraph(mainDocumentPart, factory, "吾悦广场5楼", JcEnumeration.CENTER);
@@ -193,7 +199,13 @@ public class PrintTemplateTools {
             createNormalTable(wPackage, mainDocumentPart, factory, fdd);
             createParagraph(mainDocumentPart, factory, "", JcEnumeration.RIGHT);
 
-            createParagraph(mainDocumentPart, factory, "合计："+fdd.getTotalMoney()+" 元", JcEnumeration.RIGHT, "000000", "28",
+            Float discountMoney = fdd.getDiscountMoney();
+            if(discountMoney!=null && discountMoney>0) {
+                createParagraph(mainDocumentPart, factory, "抵扣："+discountMoney+" 元", JcEnumeration.RIGHT, "000000", "22",
+                        true, true, false, false);
+            }
+
+            createParagraph(mainDocumentPart, factory, "实收："+(fdd.getTotalMoney()-(discountMoney==null?0:discountMoney))+" 元", JcEnumeration.RIGHT, "000000", "28",
                     true, true, false, false);
 
             createParagraph(mainDocumentPart, factory, "吾悦广场5楼", JcEnumeration.CENTER);

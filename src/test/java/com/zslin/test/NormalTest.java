@@ -10,7 +10,9 @@ import com.zslin.model.DiscountTime;
 import com.zslin.model.FoodOrderDetail;
 import com.zslin.service.*;
 import com.zslin.tools.*;
+import com.zslin.web.dto.BagDiscountDto;
 import com.zslin.web.dto.MyTimeDto;
+import com.zslin.web.tools.BagDiscountTools;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,6 +67,15 @@ public class NormalTest {
 
     @Autowired
     private IFoodOrderDetailService foodOrderDetailService;
+
+    @Autowired
+    private BagDiscountTools bagDiscountTools;
+
+    @Test
+    public void test40() {
+        BagDiscountDto dto = bagDiscountTools.onDiscount("20201017001", 1);
+        System.out.println(dto);
+    }
 
     @Test
     public void test39() {

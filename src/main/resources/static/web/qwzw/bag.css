@@ -2,11 +2,11 @@
     display: flex;
 }
 .category-main {
-    width: 150px;
+
 }
-.category-main ul {padding:0px; background:#f7f7f7;border:1px #e0e0e0 solid; border-width: 1px 1px 0px 1px;}
+.category-main ul {padding:0px; background:#f7f7f7; display: inline;}
 .category-main ul li {
-    list-style:none; text-align:center; height: 40px; line-height: 40px; border-bottom:1px #e0e0e0 solid; cursor:pointer;
+    list-style:none; text-align:center; height: 40px; line-height: 40px; padding: 0px 15px; margin: 12px; border:1px #e0e0e0 solid; cursor:pointer; float: left;
 }
 .food-list-con {
     flex: 1; display: block-inline;
@@ -22,3 +22,16 @@
 .single-food .price b {color:#F20;}
 
 .canClick {cursor: pointer;}
+
+.red {
+    color:#F00;
+}
+
+
+.detail-div {
+    //border:1px red solid;
+}
+
+.single-detail {
+    border: 1px #e0e0e0 solid; padding:8px 0px; float:left; margin: 10px; padding: 10px 20px; border-radius: 5px; background:#fafafa;
+}

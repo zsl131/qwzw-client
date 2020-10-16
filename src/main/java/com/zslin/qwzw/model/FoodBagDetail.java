@@ -51,4 +51,7 @@ public class FoodBagDetail {
     /** 一串菜品名称，用于显示 */
     @Column(name = "food_names")
     private String foodNames;
+
+    @Column(name = "total_count")
+    private Integer totalCount = 0;
 }

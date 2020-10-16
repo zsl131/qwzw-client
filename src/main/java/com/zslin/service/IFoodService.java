@@ -5,6 +5,7 @@ import com.zslin.model.Food;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface IFoodService extends BaseRepository<Food, Integer>, JpaSpecific
     @Modifying
     @Transactional
     void deleteByDataId(Integer id);
+
+    @Query("FROM Food f WHERE f.id IN (?1)")
+    List<Food> findByIds(Integer [] ids);
 }

@@ -3,12 +3,16 @@ package com.zslin.web.controller;
 import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.NormalTools;
 import com.zslin.model.*;
+import com.zslin.qwzw.model.FoodBag;
+import com.zslin.qwzw.service.IFoodBagService;
 import com.zslin.qwzw.tools.FoodDataTools;
 import com.zslin.qwzw.tools.RefundFoodTools;
 import com.zslin.service.*;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.WorkerCookieTools;
 import com.zslin.web.dto.AppendFoodDto;
+import com.zslin.web.dto.BagDiscountDto;
+import com.zslin.web.tools.BagDiscountTools;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -57,6 +61,12 @@ public class WebFoodOrderController {
 
     @Autowired
     private IRefundOrderFoodService refundOrderFoodService;
+
+    @Autowired
+    private IFoodBagService foodBagService;
+
+    @Autowired
+    private BagDiscountTools bagDiscountTools;
 
     /** 订单详情 */
     @GetMapping(value = "show")
@@ -279,6 +289,7 @@ public class WebFoodOrderController {
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("detailList", foodOrderDetailService.findByOrderNo(orderNo, SimpleSortBuilder.generateSort("createTime_d")));
         model.addAttribute("order", order);
+        model.addAttribute("bagList", foodBagService.findByStatus("1"));
 
         return "web/foodOrder/order";
     }
@@ -324,5 +335,17 @@ public class WebFoodOrderController {
 
     private String buildShowUrl(String orderNo) {
         return "redirect:/web/foodOrder/show?orderNo="+orderNo;
+    }
+
+    /** 当使用套餐抵价 */
+    @PostMapping(value = "onBagDiscount")
+    public @ResponseBody
+    BagDiscountDto onBagDiscount(String orderNo, Integer bagId) {
+        //FoodOrder order = foodOrderService.findByNo(orderNo);
+        //FoodBag bag = foodBagService.findOne(bagId);
+        foodOrderService.updateTypeByOrderNo("3", orderNo);
+        BagDiscountDto dto = bagDiscountTools.onDiscount(orderNo, bagId);
+        //
+        return dto;
     }
 }

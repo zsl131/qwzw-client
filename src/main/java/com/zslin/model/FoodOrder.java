@@ -54,7 +54,7 @@ public class FoodOrder {
     @Column(name = "end_long")
     private Long endLong;
 
-    /** 订单类型；1-普通订单；2-美团订单 */
+    /** 订单类型；1-普通订单；2-美团订单；3-套餐订单 */
     private String type;
 
     /** 优惠金额 */
@@ -65,7 +65,7 @@ public class FoodOrder {
     @Column(name = "discount_reason")
     private String discountReason;
 
-    /** 优惠类型；0-无优惠；1-积分抵价；2-友情价；3-抵价券；4-微信扣款订单；5-会员扣款订单；6-美团扣款订单；9-飞凡扣款订单；10-时段折扣，12-折扣日 */
+    /** 优惠类型；0-无优惠；1-积分抵价；2-友情价；3-抵价券；4-微信扣款订单；5-会员扣款订单；6-美团扣款订单；9-飞凡扣款订单；10-时段折扣，12-折扣日，13-套餐 */
     @Column(name = "discount_type")
     private String discountType;
 

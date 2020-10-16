@@ -10,35 +10,41 @@
 		<script type="text/javascript" src="/web/qwzw/bag.js"></script>
 		<link type="text/css" rel="stylesheet" href="/web/qwzw/bag.css"/>
 		<title>套餐配置</title>
-		<style>
-			.single-level {
-				float:left; margin-right:5px; border:1px #ddd solid; font-weight:normal; padding:0px 8px; border-radius:5px; background:#FaFAFA;
-			}
-		</style>
 	</head>
 	<body>
 		<div th:fragment="content" th:remove="tag">
 			<div class="container">
 				<div th:replace="web/foodBag/bag-title-opts :: content" th:remove="tag"></div>
 				<div class="row" style="background:#FFF;margin-top: 12px;">
-					<div class="col-md-3" style="padding:10px; text-align:left;">
+					<div class="col-md-9" style="padding:10px; text-align:left; border-right: 1px #e0e0e0 solid;">
 						<h4 style="text-align:center;">配置套餐内容</h4>
+						<div style="background:#f0f0f0; padding: 10px;">
 						<p>套餐名称：<b th:text="${bag.name}"></b></p>
 						<p>备注：<b th:text="${bag.remark}"></b></p>
+						<input name="bagId" th:value="${bag.id}" type="hidden"/>
+						<input name="bagName" th:value="${bag.name}" type="hidden"/>
+						</div>
+						<div class="detail-div">
+							<h4>套餐详情：</h4>
+							<div class="single-detail" th:each="detail: ${detailList}">
+								<p><b th:text="${detail.categoryName}"></b>:</p>
+								<p th:text="${detail.foodNames}"></p>
+								<p><b th:text="${detail.totalCount}"></b>选<b th:text="${detail.amount}"></b></p>
+								<button class="btn btn-danger btn-sm" onclick="deleteDetail(this)" th:attr="objId=${detail.id}">删除</button>
+							</div>
+						</div>
 					</div>
-					<div class="col-md-9" style="padding:10px; border-left: 1px #e0e0e0 solid;">
+					<div class="col-md-3" style="padding:10px;">
 						<div class="foot-list-main">
 							<div class="category-main">
+								<p class="red">点击下面分类开始设置</p>
 								<ul>
 									<li th:each="cate: ${categoryList}" th:text="${cate.name}"
 										th:attr="cateId=${cate.dataId}, cateName=${cate.name}"
 										 onclick="onSetDetail(this)"></li>
 								</ul>
 							</div>
-							<div class="food-list-con">
-								<!--<div th:each="food: ${foodList}"
-									 th:attr="foodId=${food.id},cateId=${food.cateId}, cateName=${food.cateName},foodName=${food.name}"
-									 class="single-food" onclick="onSetDetail(this)">-->
+							<div class="food-list-con" style="display:none;">
 								<div th:each="food: ${foodList}"
 									 th:attr="foodId=${food.id},cateId=${food.cateId}, cateName=${food.cateName},foodName=${food.name}"
 									 class="single-food">

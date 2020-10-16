@@ -18,6 +18,11 @@ public interface IFoodOrderService extends BaseRepository<FoodOrder, Integer>, J
     @Query("SELECT f.tableId FROM FoodOrder f WHERE f.status=?1")
     List<Integer> findTableIds(String status);
 
+    @Query("UPDATE FoodOrder f SET f.type=?1 WHERE f.no=?2")
+    @Modifying
+    @Transactional
+    void updateTypeByOrderNo(String type, String orderNo);
+
     /** 获取正在就餐中的订单 */
     @Query("FROM FoodOrder f WHERE f.status='0'")
     List<FoodOrder> findByMealing();

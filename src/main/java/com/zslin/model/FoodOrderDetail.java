@@ -75,6 +75,10 @@ public class FoodOrderDetail {
     /** 小计 */
     private Float subtotal=0f;
 
+    /** 套餐抵价数量 */
+    @Column(name = "bag_count")
+    private Integer bagCount = 0;
+
     /** 打印标记，1-吧台；2-厨房；3-甜品店；all-全部 */
     @Column(name = "print_flag")
     private String printFlag;

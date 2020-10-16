@@ -85,11 +85,15 @@
                                 <div class="btn-group order-type-div" role="group" aria-label="...">
                                     <button type="button" orderType="1" th:class="'btn btn-default '+${(order.type eq null or order.type eq '' or order.type eq '1')?'btn-info':''}" ><i class="fa fa-gavel"></i> 正常</button>
                                     <button type="button" orderType="2" th:class="'btn btn-default '+${order.type eq '2'?'btn-info':''}" title="认真输入美团编号"><i class="fa fa-tumblr"></i> 美团（断网）</button>
+                                    <button type="button" orderType="3" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="请选择相应套餐"><i class="fa fa-tumblr"></i> 套餐抵价</button>
                                 </div>
                             </div>
                             <div class="special-type" style="display:none">
 
                             </div>
+
+                            <!-- 用于折扣 -->
+                            <input name="discount" type="hidden"/>
 
                             <div class="form-group">
                             <div class="input-group input-group-lg">

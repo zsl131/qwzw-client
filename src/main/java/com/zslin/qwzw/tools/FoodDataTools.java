@@ -8,6 +8,7 @@ import com.zslin.qwzw.dto.FoodDataDto;
 import com.zslin.qwzw.model.PrintConfig;
 import com.zslin.service.IFoodOrderDetailService;
 import com.zslin.service.IFoodOrderService;
+import com.zslin.service.IOrderBagDetailService;
 import com.zslin.tools.PrintTemplateTools;
 import com.zslin.tools.PrintTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,13 @@ public class FoodDataTools {
     @Autowired
     private PrintConfigTools printConfigTools;
 
+    @Autowired
+    private IOrderBagDetailService orderBagDetailService;
+
     /** 调用打印 */
     private void print(String printName, File file) {
         PrintTools.print(file.getAbsolutePath(), printName);
+        //TODO 下面这行不能注释
         file.delete();
     }
 
@@ -57,6 +62,7 @@ public class FoodDataTools {
         dto.setColNames("菜品", "数量", "小计");
         dto.setData(buildData2Cash(detailList));
         dto.setTotalMoney(buildMoney(detailList));
+        dto.setDiscountMoney(orderBagDetailService.sumDiscountMoney(orderNo));
 
         File file = printTemplateTools.buildSettleFile(dto);
 
@@ -137,8 +143,9 @@ public class FoodDataTools {
         dto.setTotalMoney(buildMoney(detailList));
         dto.setPos(FoodDataDto.POS_CASH);
         dto.setTotalMoney(order.getTotalMoney2());
+        dto.setDiscountMoney(orderBagDetailService.sumDiscountMoney(orderNo));
 
-        System.out.println(dto);
+        //System.out.println(dto);
 
         File file = printTemplateTools.buildOrderFile(dto);
 

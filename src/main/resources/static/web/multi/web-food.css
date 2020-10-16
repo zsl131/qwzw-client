@@ -38,3 +38,11 @@ ul.food-list-ul li p.name {
 ul.food-list-ul li p.price {
     width:100%; text-align:center; color:#000; font-size: 16px;
 }
+
+.single-food-div button {
+    margin: 5px;
+}
+
+.choice-div button {
+    margin: 5px;
+}
