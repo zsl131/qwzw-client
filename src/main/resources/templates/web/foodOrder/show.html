@@ -123,6 +123,7 @@
                                 </div>
                                 <div style="flex:1; text-align:right;">实付金额：￥ <b style="font-size: 40px; padding-right: 10px; color:#F00;" th:text="${order.totalMoney2-order.discountMoney}"></b>元</div>
                             </div>
+                            <div><button class="btn btn-primary" onclick="printOrderShow(this)" th:attr="orderNo=${order.no}">打印消费单</button></div>
                         </div>
                     </div>
                 </div>

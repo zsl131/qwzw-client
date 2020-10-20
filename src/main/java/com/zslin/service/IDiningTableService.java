@@ -2,6 +2,7 @@ package com.zslin.service;
 
 import com.zslin.basic.repository.BaseRepository;
 import com.zslin.model.DiningTable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +19,5 @@ public interface IDiningTableService extends BaseRepository<DiningTable, Integer
     void deleteByDataId(Integer dataId);
 
     @Query("SELECT t FROM DiningTable t WHERE t.id NOT IN (SELECT o.tableId FROM FoodOrder o WHERE o.status='0')")
-    List<DiningTable> findEmptyTableIds();
+    List<DiningTable> findEmptyTableIds(Sort sort);
 }

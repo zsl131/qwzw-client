@@ -1,10 +1,9 @@
 package com.zslin.web.tools;
 
 import com.zslin.basic.repository.SimpleSortBuilder;
-import com.zslin.model.FoodOrder;
+import com.zslin.basic.tools.MyBeanUtils;
 import com.zslin.model.FoodOrderDetail;
 import com.zslin.model.OrderBagDetail;
-import com.zslin.qwzw.model.FoodBag;
 import com.zslin.qwzw.model.FoodBagDetail;
 import com.zslin.qwzw.service.IFoodBagDetailService;
 import com.zslin.qwzw.service.IFoodBagService;
@@ -75,13 +74,27 @@ public class BagDiscountTools {
     }
 
     private List<FoodOrderDetail> rebuildList(List<FoodOrderDetail> detailList, Integer detailId, Integer amount) {
+//System.out.println(detailList);
         List<FoodOrderDetail> result = new ArrayList<>();
         for(FoodOrderDetail fod : detailList) {
             if(fod.getId().equals(detailId)) {
-                if(fod.getAmount()>amount) {fod.setAmount(fod.getAmount()-amount);result.add(fod);}
-            } else {result.add(fod);}
+                if(fod.getAmount()>amount) {
+                    FoodOrderDetail obj = buildDetail(fod);
+                    obj.setAmount(fod.getAmount()-amount);result.add(obj);
+                }
+            } else {result.add(buildDetail(fod));}
         }
         return result;
+    }
+
+    private FoodOrderDetail buildDetail(FoodOrderDetail fod) {
+        FoodOrderDetail res = new FoodOrderDetail();
+        MyBeanUtils.copyProperties(fod, res);
+        res.setId(fod.getId());
+        res.setCreateTime(fod.getCreateTime());
+        res.setCreateLong(fod.getCreateLong());
+        res.setCreateDay(fod.getCreateDay());
+        return res;
     }
 
     /*private Integer [] buildIds(String ids) {

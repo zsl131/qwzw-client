@@ -1,0 +1,35 @@
+.bottom-nav-div {
+    position: fixed; bottom:0px; left:0px; height: 40px; background:#FFF; width:100%; border-top: 1px #ddd solid; padding: 5px;
+    display: flex;
+}
+
+.phone-side-div .food-list-div {
+    padding: 0px;
+}
+.phone-side-div ul.food-list-ul {
+    float:left;
+}
+
+.phone-side-div ul.food-list-ul li {
+    list-style: none; display: inline; width: 30%; border:1px #ddd solid; float: left; margin: 0px 2% 10px 0px;
+    border-radius: 5px; background:#dfdfdf; cursor:pointer; margin-left: 0px;
+}
+
+.phone-side-div ul.food-list-ul li img {
+    width:90%; margin: 5px 0px 5px 5%; height: 80px;
+}
+
+.table-name {
+    line-height: 30px; font-weight: bold; padding: 0px 5px;
+}
+
+.new-food-badge {
+    color:#F00;
+}
+
+.phone-show-new-food {
+    position: relative;
+}
+.phone-show-add-msg {
+    position: absolute; background:#05b46c; color:#FFF; left: 0px; top: -30px; padding: 5px 12px; border-radius: 5px; display: none; font-weight: bold;
+}

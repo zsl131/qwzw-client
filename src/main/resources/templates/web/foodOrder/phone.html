@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="content" th:remove="tag">
+            <script type="text/javascript" src="/web/newOrders/orders-update-pay-type.js"></script>
+            <div class="col-sm-12 col-xs-12" style="padding: 0px;">
+                <div class="form-group" style="padding: 10px 10px 0px 10px;">
+                    <div class="input-group">
+                        <div class="input-group-addon">筛选：</div>
+                        <input tabindex="1" name="keyword" onkeyup="onSearch(this)" type="text" class="form-control" placeholder="可输入名称、名称首字母" />
+                    </div>
+                </div>
+
+                <div class="food-list-div">
+                    <ul class="food-list-ul">
+                        <li th:each="bag : ${bagList}" onclick="showFoodBag(this)" th:attr="bagId=${bag.id}" foodName="套餐" sn="taocan" nameLetter="TC">
+                            <img src="/web/bag.jpg"/>
+                            <p class="name" th:text="${bag.name}"></p>
+                            <p class="price" th:text="${bag.remark}"></p>
+                        </li>
+                        <li th:each="food : ${foodList}" onclick="addBasket(this)" th:attr="foodId=${food.id}, price=${food.price}, cateId=${food.cateId}, foodName=${food.name}, sn=${food.sn},nameLetter=${food.nameLetter}">
+                            <img th:src="${food.picPath}"/>
+                            <p class="name" th:text="${food.name}"></p>
+                            <p class="price">￥ <b th:text="${food.price}"></b> / <span th:text="${food.unitName}">份</span></p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bottom-nav-div">
+                    <div th:text="${order.tableName}" class="table-name"></div>
+                    <button class="btn btn-info" onclick="onChangeTable()">换桌</button>&nbsp;&nbsp;
+                    <button class="btn btn-danger" onclick="window.location.reload()">刷新</button>&nbsp;&nbsp;
+                    <!--<button class="btn btn-danger" onclick="onPhoneOrder(this)">下单</button>&nbsp;&nbsp;-->
+
+                    <button class="btn btn-primary phone-show-new-food" type="button" onclick="showPhoneFood()">
+                        新增菜品 <span class="badge new-food-badge" style="color:#F00">0</span>
+                        <span class="phone-show-add-msg">菜品添加成功</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

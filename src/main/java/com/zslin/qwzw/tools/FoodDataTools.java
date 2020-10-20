@@ -63,6 +63,7 @@ public class FoodDataTools {
         dto.setData(buildData2Cash(detailList));
         dto.setTotalMoney(buildMoney(detailList));
         dto.setDiscountMoney(orderBagDetailService.sumDiscountMoney(orderNo));
+        dto.setDiscountReason(order.getDiscountReason());
 
         File file = printTemplateTools.buildSettleFile(dto);
 
@@ -78,16 +79,6 @@ public class FoodDataTools {
         if(pc!=null) { //如果打印配置不为空
             List<FoodOrderDetail> cookData = buildData(detailList, "2"); //厨房菜单
             if(cookData!=null && cookData.size()>0) {
-                /*FoodDataDto cookDto = buildBaseDto(order, batchNo, isFirst, company);
-                cookDto.setColWidths(75, 25);
-                cookDto.setColNames("菜品", "数量");
-                cookDto.setData(buildData2Cook(cookData));
-                cookDto.setPos(FoodDataDto.POS_COOK);
-
-                File file = printTemplateTools.buildFoodFile(cookDto);
-
-                print(pc.getPrintName2(), file);*/
-
                 if(cookData!=null && cookData.size()>0) {
                     FoodDataDto cookDto = buildBaseDto(order, batchNo, isFirst, company);
                    // System.out.println(cookData);
@@ -115,14 +106,19 @@ public class FoodDataTools {
             List<FoodOrderDetail> sweetData = buildData(detailList, "3"); //甜品菜单
             if(sweetData!=null && sweetData.size()>0) {
                 FoodDataDto sweetDto = buildBaseDto(order, batchNo, isFirst, company);
-                sweetDto.setColWidths(75, 25);
+                /*sweetDto.setColWidths(75, 25);
                 sweetDto.setColNames("菜品", "数量");
                 sweetDto.setData(buildData2Cook(sweetData));
                 sweetDto.setPos(FoodDataDto.POS_SWEET);
 
                 File file = printTemplateTools.buildFoodFile(sweetDto);
 
-                print(pc.getPrintName3(), file);
+                print(pc.getPrintName3(), file);*/
+                List<String> names = buildData2Cook(sweetData);
+                for(String name : names) {
+                    File file = printTemplateTools.buildCookFile(sweetDto.getDeskName(), name);
+                    print(pc.getPrintName3(), file);
+                }
             }
         }
     }
@@ -143,7 +139,8 @@ public class FoodDataTools {
         dto.setTotalMoney(buildMoney(detailList));
         dto.setPos(FoodDataDto.POS_CASH);
         dto.setTotalMoney(order.getTotalMoney2());
-        dto.setDiscountMoney(orderBagDetailService.sumDiscountMoney(orderNo));
+        dto.setDiscountMoney(order.getDiscountMoney());
+        dto.setDiscountReason(order.getDiscountReason());
 
         //System.out.println(dto);
 

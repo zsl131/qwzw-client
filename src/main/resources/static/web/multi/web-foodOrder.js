@@ -76,59 +76,79 @@ function rebuildBasket(obj) {
     calAppendTotalMoney(); //重新计算金额
 }
 
-function onModifyAmount(obj) {
-    var foodName = $(obj).parents("li").find(".name").html();
-    var foodAmount = parseInt($(obj).find(".food_amount").html()); //数量
+function onModifyAmount(optObj) {
+    var foodId = $(optObj).parents("li.new-append").attr("foodId");
 
-    var html = "<div>"+
-                "<p>菜品名称：<b class='red'>"+foodName+"</b></p>"+
-                "<input type='number' name='amount' title='请输入具体数量，只能输入正整数' placeholder='输入数量' class='form-control' value='"+foodAmount+"'/></div>";
-    var dialog = confirmDialog(html, "修改菜品数量", function() {
-        //console.log("----")
-        var amount = parseInt($(dialog).find("input[name='amount']").val());
-        if(amount>0) {
-            $(obj).find(".food_amount").html(amount);
-            if(amount>1) {
-                $(obj).find(".food_amount").addClass("amount");
-            } else {
-                $(obj).find(".food_amount").removeClass("amount");
-            }
-            calAppendTotalMoney(); //重新计算金额
-            $(dialog).remove();
-        } else {
-            showDialog("请输入正整数", "系统提示");
+    var liObj = $('.food-list-container').find("li[foodId='"+foodId+"']");
+    //console.log(liObj.length)
+    for(var i=0;i<liObj.length;i++) {
+        var obj = liObj[i];
+//        var foodName = $(obj).parents("li").find(".name").html();
+        var foodName = $(obj).find(".name").html();
+        var price = parseFloat($(obj).find(".price").html().replace("￥","")); //单价
+    //    console.log(price)
+        var foodAmount = parseInt($(obj).find(".food_amount").html()); //数量
+
+        var html = "<div>"+
+                    "<p>菜品名称：<b class='red'>"+foodName+"</b></p>"+
+                    "<input type='number' name='amount' title='请输入具体数量，只能输入正整数' placeholder='输入数量' class='form-control' value='"+foodAmount+"'/></div>";
+        if(i==0) {
+            var dialog = confirmDialog(html, "修改菜品数量", function() {
+                //console.log("----")
+                var amount = parseInt($(dialog).find("input[name='amount']").val());
+                if(amount>0) {
+                    for(var i=0;i<liObj.length;i++) {
+                        obj = liObj[i];
+                        $(obj).find(".food_amount").html(amount);
+                        if(amount>1) {
+                            $(obj).find(".food_amount").addClass("amount");
+                        } else {
+                            $(obj).find(".food_amount").removeClass("amount");
+                        }
+                        $(obj).find(".total").html("￥"+(amount*price));
+                    }
+                    calAppendTotalMoney(); //重新计算金额
+                    $(dialog).remove();
+                } else {
+                    showDialog("请输入正整数", "系统提示");
+                }
+            })
         }
-    })
+    }
 }
 
 //点击操作按钮
 function onClickOperator(obj, flag) {
     var pobj = $(obj).parents("li");
-    var price = $(pobj).attr("price");
     var foodId = $(pobj).attr("foodId");
+    //console.log(pobj.length)
+    var price = $(pobj).attr("price");
     var curAmount = parseInt($(pobj).find(".food_amount").html());
     var orderNo = $(pobj).attr("orderNo"); var batchNo = $(pobj).attr("batchNo");
-    console.log(orderNo, batchNo)
+    //console.log(orderNo, batchNo)
     if("-"==flag) {
         if(curAmount>1) {
-            $(pobj).find(".food_amount").html(curAmount-1);
+            /*$(pobj).find(".food_amount").html(curAmount-1);
             $(pobj).find(".total").html("￥"+((curAmount-1)*price));
             if(curAmount-1>1) {
                 $(pobj).find(".food_amount").addClass("amount");
             } else {
                 $(pobj).find(".food_amount").removeClass("amount");
-            }
+            }*/
+            setAmountOnModify(foodId, "-", curAmount, price);
         } else {
             showDialog("数量为1，不能再减了", "系统提示");
         }
     } else if("+"==flag) {
-        $(pobj).find(".food_amount").addClass("amount");
+        /*$(pobj).find(".food_amount").addClass("amount");
         $(pobj).find(".food_amount").html(curAmount+1);
-        $(pobj).find(".total").html("￥"+((curAmount+1)*price));
+        $(pobj).find(".total").html("￥"+((curAmount+1)*price));*/
+        setAmountOnModify(foodId, "+", curAmount, price);
     } else if("d"==flag) {
         var foodName = $(pobj).find(".name").html();
         var delDialog = confirmDialog("确定移除【"+foodName+"】吗？", "系统提示", function() {
-            $(pobj).remove();
+            /*$(pobj).remove();*/
+            setAmountOnModify(foodId, "d");
             $(delDialog).remove();
             calAppendTotalMoney(); //重新计算金额，这里是异步调用，所以需要单独再计算一次
         })
@@ -145,6 +165,29 @@ function onClickOperator(obj, flag) {
     }
     calAppendTotalMoney(); //重新计算金额
 //    console.log(price, foodId)
+}
+
+function setAmountOnModify(foodId, flag, curAmount, price) {
+    var liObj = $('.food-list-container').find("li[foodId='"+foodId+"']");
+    for(var i=0;i<liObj.length;i++) {
+        var pobj = liObj[i];
+        if(flag=='-') {
+            $(pobj).find(".food_amount").html(curAmount-1);
+            $(pobj).find(".total").html("￥"+((curAmount-1)*price));
+            if(curAmount-1>1) {
+                $(pobj).find(".food_amount").addClass("amount");
+            } else {
+                $(pobj).find(".food_amount").removeClass("amount");
+            }
+        } else if(flag=='+') {
+            $(pobj).find(".food_amount").addClass("amount");
+            $(pobj).find(".food_amount").html(curAmount+1);
+            $(pobj).find(".total").html("￥"+((curAmount+1)*price));
+        } else if(flag=='d') {
+            $(pobj).remove();
+        }
+    }
+    //console.log(liObj.length)
 }
 
 function onOperator(obj) {
@@ -180,21 +223,29 @@ function setBorder(obj) {
 
 //计算新增菜品总金额
 function calAppendTotalMoney() {
-    const conObj = $('.food-list-container');
+//    console.log($('.food-list-container').length)
+    var targetObj = $('.food-list-container');
+    var conObj = targetObj;
+    if(targetObj.length>1) {conObj = targetObj[1];}
     let total = 0;
     let totalCount = 0;
     $(conObj).find("li").each(function() {
         const count = parseInt($(this).find(".food_amount").html());
         total += (parseFloat($(this).attr("price"))*count); //总金额
         totalCount += count;
-//        total+=parseFloat($(this).find(".food_amount").html());
+//      total+=parseFloat($(this).find(".food_amount").html());
     });
     total = Number(total).toFixed(2);
-    $(conObj).parents(".new-append-div").find("li.result").find(".total").html("￥"+total +" 元");
+    for(var i=0;i<targetObj.length;i++) {
+    //console.log($(targetObj[i]).siblings("li.result").find(".total").html())
+        $(targetObj[i]).siblings("li.result").find(".total").html("￥"+total +" 元");
+    }
     if(totalCount>0) { //设置徽章数字
         $(".append-badge").html(totalCount);
+        setPhoneAmount(totalCount);
     } else {
         $(".append-badge").html('');
+        setPhoneAmount(0);
     }
 }
 
@@ -207,21 +258,30 @@ function setActive(cls) {
 }
 
 function onSubmitFood(obj) {
-    const conObj = $('.food-list-container');
-    let totalMoney = 0;
-    let foodData = '';
+    //手机端下单时这里会出现两个conObj对象，会导致重复下单，所以只取第一个
+    var conObj = $('.food-list-container');
+    if(conObj.length>1) {conObj = conObj[1];}
+    //console.log($(conObj).length, $(conObj).html())
+    //console.log($(conObj).find("li.new-append").length)
+    var totalMoney = 0;
+    var foodData = '';
     $(conObj).find("li").each(function() {
         const foodId = $(this).attr("foodId");
         const count = parseInt($(this).find(".food_amount").html()); //数量
         totalMoney += (parseFloat($(this).attr("price"))*count); //总金额
-        foodData += foodId+"-"+count+"_";
+        var singleData = foodId+"-"+count+"_";
+        if(foodData.indexOf(singleData)<0) { //手机端会重复提交
+            foodData += singleData;
+        }
     });
+    //console.log(foodData, totalMoney)
+    //return false;
     if(totalMoney<=0) {
         showDialog("未添加任何菜品，不可提交。请先点击左边菜品进行添加", "系统提示");
     } else {
         //console.log("-----可以提交------"+totalMoney+"======orderNO:" +orderNo, foodData);
         const loadDialog = showLoading("数据正在提交...", "static");
-        $(obj).attr("disabled", "true")
+        $(obj).attr("disabled", "disabled")
         $.post("/web/foodOrder/appendFood", {orderNo:orderNo, foodData: foodData}, function(res) {
             //console.log(res);
             if(res=='1') {
@@ -237,6 +297,41 @@ function onSubmitFood(obj) {
     //console.log('-----------------')
 }
 
+/** 手机端下单 */
+function onPhoneOrder(obj) {
+    onSubmitFood(obj);
+}
+
+function setPhoneAmount(amount) {
+    $(".new-food-badge").html(amount);
+    setFoodStyle();
+}
+
+function setFoodStyle() {
+    var obj = $(".phone-show-add-msg");
+    $(obj).slideDown(100);
+    var index = 12;
+    var timeout = setInterval(function() {
+        index--;
+        $(obj).css("background", buildColor());
+        if(index<=0) {clearInterval(timeout); $(obj).slideUp(100)}
+    }, 100);
+
+}
+
+/** 获取随机颜色 */
+function buildColor() {
+    var array = ["#bb0909", "#ac09bb", "#5409bb", "#1e09bb", "#0982bb", "#09bbb5", "#09bb48", "#97bb09", "#bb7209"];
+    var index = parseInt(Math.random()*array.length);
+    return array[index];
+}
+
+function showPhoneFood() {
+    var obj = $(".new-append-div");
+    var html = $(".new-append-div").html();
+    showDialog(html, "新增菜品显示");
+}
+
 /** 结算订单 */
 function onSettleOrder(obj) {
     const appendAmount = parseInt($(".append-badge").html());
@@ -244,7 +339,7 @@ function onSettleOrder(obj) {
         showDialog("存在新增菜品，请先处理后再结算订单", "系统提示");
     } else {
         const totalAmount = parseInt($(".already-amount").html());
-        console.log(totalAmount);
+        //console.log(totalAmount);
         if(totalAmount>=1) {
 //            showDialog("可以结算订单", "系统提示");
             window.location.href = "/web/foodOrder/onSettle?orderNo="+orderNo;
@@ -295,7 +390,7 @@ function showChoiceTable(tableList) {
 function changeTable(obj) {
     const tableId = $(obj).attr("tableId");
     const tableName = $(obj).attr("tableName");
-    console.log(tableId)
+    //console.log(tableId)
     const conDialog = confirmDialog("确定更换到【"+tableName+"】吗？", "操作提示", function() {
         $.post("/web/foodOrder/changeTable", {orderNo: orderNo, tableId: tableId, tableName: tableName}, function(res) {
             if("1"==res) {
@@ -308,6 +403,6 @@ function changeTable(obj) {
 }
 
 function checkRefresh() {
-    console.log("------------")
+    //console.log("------------")
     return true;
 }

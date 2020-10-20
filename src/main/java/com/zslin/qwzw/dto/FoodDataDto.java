@@ -56,6 +56,9 @@ public class FoodDataDto {
     /** 抵扣金额 */
     private Float discountMoney = 0f;
 
+    /** 抵扣原因 */
+    private String discountReason;
+
     public static FoodDataDto getInstance() {return new FoodDataDto();}
 //    public static FoodDataDto getInstance(int length) {return new FoodDataDto(length);}
 

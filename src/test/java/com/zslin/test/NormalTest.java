@@ -96,7 +96,7 @@ public class NormalTest {
 
     @Test
     public void test38() {
-        List<DiningTable> tableList = diningTableService.findEmptyTableIds();
+        List<DiningTable> tableList = diningTableService.findEmptyTableIds(SimpleSortBuilder.generateSort("orderNo"));
         for(DiningTable dt : tableList) {
             System.out.println(dt);
         }

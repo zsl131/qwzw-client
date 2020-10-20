@@ -18,12 +18,17 @@
     <script type="text/javascript" src="/web/multi/web-foodBag.js"></script>
     <link type="text/css" rel="stylesheet" href="/web/multi/web-order-menu.css"/>
     <link type="text/css" rel="stylesheet" href="/web/multi/web-order-normal.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/qwzw/order-phone.css"/>
 </head>
 <body>
 <!--onbeforeunload="return checkRefresh()"-->
     <div th:fragment="content" th:remove="tag">
         <div class="orders-main-div ">
-            <div class="row">
+            <!-- 手机端 -->
+            <div class="row visible-xs-block phone-side-div">
+                <div th:replace="web/foodOrder/phone :: content" th:remove="tag"></div>
+            </div>
+            <div class="row visible-md-block visible-lg-block">
                 <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
                     <!--<div class="commodity-type-list">
                         <ul>

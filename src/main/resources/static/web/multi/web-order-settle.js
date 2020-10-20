@@ -44,6 +44,15 @@ function printOrder() {
     });
 }
 
+/** 结账以后打印订单信息 */
+function printOrderShow(obj) {
+    var orderNo = $(obj).attr("orderNo");
+    $.post("/web/foodOrder/printOrder", {orderNo: orderNo}, function(res) {
+        if(res=='1') {alert("打印成功，请留意打印机")}
+    }, "json")
+    //console.log(orderNo)
+}
+
 function refundFood(obj) {
     //foodId=${food.foodId},foodName=${food.foodName},batchNo=${food.batchNo},detailId=${food.id}
     var foodId = $(obj).attr("foodId"); var foodName = $(obj).attr("foodName");

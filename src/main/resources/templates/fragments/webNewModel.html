@@ -78,7 +78,7 @@
     <div th:include="this :: content"></div>
 </div>
 
-<div class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+<div class="navbar navbar-default navbar-fixed-bottom visible-md-block visible-lg-block" role="navigation">
     <div class="container text-center login-bottom">
         &copy;<span class="show-year">2016</span><span th:text="${session.appConfig ne null ? session.appConfig.contant:'系统管理员'}"></span>
     </div>

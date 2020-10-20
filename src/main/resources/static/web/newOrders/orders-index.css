@@ -27,9 +27,14 @@
 .time-spe {
     float:right; margin-top:15px; color:#888;
 }
-
+.index-commodity-list {
+    padding: 0px; margin:0px;
+}
+.index-commodity-list ul {
+    padding:0px;
+}
 .index-commodity-list ul li {
-    background:#c13b38; border-radius:5px; list-style:none; display:inline; float:left; margin:10px; color:#FFF; width:120px; height:90px; padding-top:20px; cursor:pointer;
+    background:#c13b38; border-radius:5px; list-style:none; display:inline; float:left; margin:10px 10px 0px 0px; color:#FFF; width:120px; height:90px; padding-top:20px; cursor:pointer;
 }
 .index-commodity-list ul li p {
     width:100%; text-align:center; font-size:14px;

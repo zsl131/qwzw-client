@@ -71,7 +71,7 @@ function showLoading(msg, backdrop) {
 }
 
 /** bootstrap 提示框 */
-function confirmDialog(msg, title, okfn, backdrop) {
+function confirmDialog(msg, title, okfn, backdrop,closeFn) {
 	var idStr = "myConfirmDialog_"+parseInt(Math.random()*100000000);
 	if($.trim(title)=='') {title = "系统提示";}
 	var html = '';
@@ -94,6 +94,7 @@ function confirmDialog(msg, title, okfn, backdrop) {
 	$(("#"+idStr)).find(".dialog-ok-btn").click(okfn);
 	$(("#"+idStr)).on('hidden.bs.modal', function (e) {
         $(("#"+idStr)).remove();
+        if(typeof closeFn == "function") {closeFn();}
     });
 	return $(("#"+idStr));
 }

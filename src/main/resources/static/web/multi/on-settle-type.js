@@ -21,6 +21,14 @@ function switchCon(orderType) {
             setCon(buildBagHtml(res));
         }, "json");
     }
+    updateType(orderType);
+}
+
+/** 修改订单类型 */
+function updateType(type) {
+    $.post("/web/foodOrder/updateType", {orderNo: orderNo, type: type}, function(res) {
+
+    }, "json");
 }
 
 function buildBagHtml(bagList) {
@@ -84,10 +92,13 @@ function setCon(html) {
 function buildMtHtml() {
     var html = '';
     html += '<div class="form-group mt-coupon-div">'+
-        '<div class="input-group input-group-lg">'+
+        '<div class="input-group input-group">'+
             '<span class="input-group-addon">券码1：</span>'+
             '<input type="number" class="form-control" placeholder="认真输入券码" onKeyup="changeCoupon()"/>'+
             '<span class="input-group-addon">券码2：</span>'+
+            '<input type="number" class="form-control" placeholder="认真输入券码" onKeyup="changeCoupon()"/>'+
+
+            '<span class="input-group-addon">券码3：</span>'+
             '<input type="number" class="form-control" placeholder="认真输入券码" onKeyup="changeCoupon()"/>'+
         '</div>'+
         '<div style="margin-top: 10px;">美团抵价：<b class="mt-worth" style="color:#F00;">0</b> 元 </div>'+
@@ -97,7 +108,7 @@ function buildMtHtml() {
 
 function changeCoupon() {
     var count = 0;
-    mtValues = "";
+    mtValues = "美团抵价-";
     $(".mt-coupon-div").find("input").each(function() {
         var val = $(this).val();
         //console.log("---"+val)

@@ -68,6 +68,9 @@ public class WebFoodOrderController {
     @Autowired
     private BagDiscountTools bagDiscountTools;
 
+    @Autowired
+    private IOrderBagDetailService orderBagDetailService;
+
     /** 订单详情 */
     @GetMapping(value = "show")
     public String show(Model model, String orderNo) {
@@ -174,7 +177,7 @@ public class WebFoodOrderController {
     /** 获取空桌，用于换桌 */
     @PostMapping(value = "queryEmptyTables")
     public @ResponseBody List<DiningTable> queryEmptyTables() {
-        List<DiningTable> emptyTables = diningTableService.findEmptyTableIds();
+        List<DiningTable> emptyTables = diningTableService.findEmptyTableIds(SimpleSortBuilder.generateSort("orderNo"));
         return emptyTables;
     }
 
@@ -246,6 +249,13 @@ public class WebFoodOrderController {
     @PostMapping(value = "printSettle")
     public @ResponseBody String printSettle(String orderNo) {
         foodDataTools.printFoodSettle(orderNo);
+        return "1";
+    }
+
+    /** 打印结算单 */
+    @PostMapping(value = "printOrder")
+    public @ResponseBody String printOrder(String orderNo) {
+        foodDataTools.printOrder(orderNo);
         return "1";
     }
 
@@ -347,5 +357,14 @@ public class WebFoodOrderController {
         BagDiscountDto dto = bagDiscountTools.onDiscount(orderNo, bagId);
         //
         return dto;
+    }
+
+    @PostMapping(value = "updateType")
+    public @ResponseBody String updateType(String type, String orderNo) {
+        foodOrderService.updateTypeByOrderNo(type, orderNo);
+        if(!"3".equals(type)) { //如果type不为3（即不是套餐）则删除数据
+            orderBagDetailService.deleteByOrderNo(orderNo);
+        }
+        return "1";
     }
 }

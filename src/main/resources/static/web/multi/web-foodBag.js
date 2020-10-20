@@ -26,17 +26,18 @@ function showBagDialog(obj) {
             console.log(price, amount)*/
         });
         $(dialog).remove();
-    })
+    }, "static")
 }
-
 function buildHtml(obj) {
-    var html = '<div>';
+    var dialogHeight = $(window).height();
+    //console.log(dialogHeight)
+    var html = '<div style="height: '+dialogHeight*0.7+'px; overflow:auto; ">';
     var detailList = obj.detailList;
     for(var i=0;i<detailList.length;i++) {
         //console.log(detailList[i])
         var detail = detailList[i];
-        html += "<div class='single-food-div' cateId='"+detail.categoryId+"' cateName='"+detail.categoryName+"'>";
-        html += '<div><b>'+detail.categoryName+'</b>（<b>'+detail.totalCount+'</b>选<b>'+detail.amount+'</b>）</div>';
+        html += "<div class='single-food-div' cateId='"+detail.categoryId+"' detailId='"+detail.id+"' cateName='"+detail.categoryName+"'>";
+        html += '<div><b>'+detail.categoryName+'('+detail.categoryId+')</b>（<b>'+detail.totalCount+'</b>选<b style="color:#F00">'+detail.amount+'</b>）</div>';
         var names = buildFoodList(detail.foodNames);
         var ids = buildFoodList(detail.foodIds);
         for(var j=0;j<names.length;j++) {
@@ -44,7 +45,7 @@ function buildHtml(obj) {
         }
 
 
-        html += "<div class='single-cate-choice' cateName='"+detail.categoryName+"' cateId='"+detail.categoryId+"' total='"+detail.totalCount+"' amount='"+detail.amount+"'></div></div>";
+        html += "<div class='single-cate-choice' detailId='"+detail.id+"' cateName='"+detail.categoryName+"' cateId='"+detail.categoryId+"' total='"+detail.totalCount+"' amount='"+detail.amount+"'></div></div>";
     }
     ///html += '<div class="choice-div"></div>';
     html += '</div>';
@@ -62,15 +63,18 @@ function buildFoodList(values) {
 
 function onChoiceFood(obj) {
     var bagObj = $(obj).parents(".single-food-div");
+    var detailId = $(bagObj).attr("detailId");
     var cateId = $(bagObj).attr("cateId"); var cateName = $(bagObj).attr("cateName");
     var foodId = $(obj).attr("foodId"); var foodName = $(obj).attr("foodName");
     //console.log(cateId, cateName)
+    //console.log(detailId)
     //console.log(foodId, foodName)
-    checkAndAdd(cateId, cateName, foodId, foodName)
+    checkAndAdd(detailId, cateId, cateName, foodId, foodName)
 }
 
-function checkAndAdd(cateId, cateName, foodId, foodName) {
-    var choiceObj = $(".single-cate-choice[cateId='"+cateId+"']"); //存放已选择的DIV
+function checkAndAdd(detailId, cateId, cateName, foodId, foodName) {
+    var choiceObj = $(".single-cate-choice[detailId='"+detailId+"']"); //存放已选择的DIV
+
     //var checkRes = checkAmount(choiceObj);
     if(checkAmount(choiceObj)) {
         //console.log($(choiceObj).html())
@@ -111,7 +115,7 @@ function checkAmount(obj) {
     })
     //console.log("---->"+curAmount, total)
     if(curAmount>=amount) {
-        showDialog("【"+cateName+"】部份总数量不可超过【"+amount+"】", "操作提示");
+        showDialog("【"+cateName+"("+cateId+")】部份总数量不可超过【"+amount+"】", "操作提示");
         return false;
     } else {
 //        console.log("--0-0--")
